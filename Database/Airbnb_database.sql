@@ -79,7 +79,7 @@ DROP TABLE IF EXISTS `cities`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `cities` (
   `city_id` int(11) NOT NULL,
-  `name` varchar(45) DEFAULT NULL,
+  `name` varchar(45) NOT NULL,
   PRIMARY KEY (`city_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -117,6 +117,61 @@ CREATE TABLE `favourites` (
 LOCK TABLES `favourites` WRITE;
 /*!40000 ALTER TABLE `favourites` DISABLE KEYS */;
 /*!40000 ALTER TABLE `favourites` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `message`
+--
+
+DROP TABLE IF EXISTS `message`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `message` (
+  `message_id` int(11) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `reciever_id` int(11) NOT NULL,
+  `text` text NOT NULL,
+  PRIMARY KEY (`message_id`),
+  KEY `fk_message_users1_idx` (`sender_id`),
+  KEY `fk_message_users2_idx` (`reciever_id`),
+  CONSTRAINT `fk_message_users1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `fk_message_users2` FOREIGN KEY (`reciever_id`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `message`
+--
+
+LOCK TABLES `message` WRITE;
+/*!40000 ALTER TABLE `message` DISABLE KEYS */;
+/*!40000 ALTER TABLE `message` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `photos`
+--
+
+DROP TABLE IF EXISTS `photos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `photos` (
+  `photo_id` int(11) NOT NULL,
+  `url` text NOT NULL,
+  `room_id` int(11) NOT NULL,
+  PRIMARY KEY (`photo_id`),
+  KEY `fk_photos_rooms1_idx` (`room_id`),
+  CONSTRAINT `fk_photos_rooms1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`room_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `photos`
+--
+
+LOCK TABLES `photos` WRITE;
+/*!40000 ALTER TABLE `photos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `photos` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -160,11 +215,10 @@ DROP TABLE IF EXISTS `rooms`;
 CREATE TABLE `rooms` (
   `room_id` int(11) NOT NULL AUTO_INCREMENT,
   `address` varchar(45) NOT NULL,
-  `guests` int(11) DEFAULT NULL,
-  `bedrooms` int(11) DEFAULT NULL,
-  `beds` int(11) DEFAULT NULL,
-  `baths` int(11) DEFAULT NULL,
-  `photos` varchar(45) DEFAULT NULL,
+  `guests` int(11) unsigned zerofill NOT NULL,
+  `bedrooms` int(11) unsigned zerofill NOT NULL,
+  `beds` int(11) unsigned zerofill NOT NULL,
+  `baths` int(11) unsigned zerofill NOT NULL,
   `price` varchar(45) NOT NULL,
   `details` varchar(100) NOT NULL,
   `city_id` int(11) NOT NULL,
@@ -257,4 +311,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-02-25  9:38:12
+-- Dump completed on 2019-02-25 11:31:34
