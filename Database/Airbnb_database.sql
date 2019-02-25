@@ -131,6 +131,7 @@ CREATE TABLE `message` (
   `sender_id` int(11) NOT NULL,
   `reciever_id` int(11) NOT NULL,
   `text` text NOT NULL,
+  `date_time` datetime NOT NULL,
   PRIMARY KEY (`message_id`),
   KEY `fk_message_users1_idx` (`sender_id`),
   KEY `fk_message_users2_idx` (`reciever_id`),
@@ -311,4 +312,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-02-25 11:31:34
+-- Dump completed on 2019-02-25 14:49:13
