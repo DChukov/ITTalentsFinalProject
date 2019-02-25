@@ -1,3 +1,3 @@
 # ITTalentsFinalProject
 Airbnb backend
-![Database](database.PNG)
+![Database](database1.PNG)
