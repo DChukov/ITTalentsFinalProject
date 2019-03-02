@@ -26,5 +26,9 @@ public class User {
 	private String phone;
 	
 
+	@Override
+	public boolean equals(Object obj) {
+		return this.email.equals(((User)obj).getEmail());
+	}
 	
 }

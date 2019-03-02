@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,8 +27,14 @@ public class UsersController {
 	private UserDao userDao;
 	
 	@PostMapping("/login")
-	public void login(@RequestBody LoginDTO user, HttpServletRequest request) {
-		User u = userDao.login(user);
+	public void login(@RequestBody LoginDTO user, HttpServletRequest request,HttpServletResponse response) {
+		User u = null;
+		try {
+			u = userDao.login(user);
+		} catch (SQLException | UserException e) {
+			response.setStatus(404);
+			e.printStackTrace();
+		}
 		HttpSession session = request.getSession();
 		session.setAttribute("userId", u.getId());
 	}
@@ -69,6 +76,27 @@ public class UsersController {
 		}
 		
 	}
+	
+/*	@PutMapping("/changeInformation")
+	public void changeUserInformation(HttpServletRequest request,HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") == null) {
+			response.setStatus(401);
+			return;
+		}
+		
+		long id = (long) session.getAttribute("userId"); 
+		try {
+			return userDao.getUserById(id);
+		} catch (UserException e) {
+			response.setStatus(401);
+			return null;
+		}
+		catch (SQLException e) {
+			response.setStatus(401);
+			return null;
+		}
+	}*/
 	
 	@PostMapping("/users")
 	public void addNewUser(@RequestBody User user){
