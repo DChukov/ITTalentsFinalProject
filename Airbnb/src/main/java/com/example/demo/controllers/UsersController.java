@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dao.UserDao;
-import com.example.demo.dao.UserException;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.model.User;
+import com.example.demo.model.dao.UserDao;
+import com.example.demo.model.dao.UserException;
 
 @RestController
 public class UsersController {
@@ -63,6 +63,11 @@ public class UsersController {
 			response.setStatus(401);
 			return null;
 		}
+		catch (SQLException e) {
+			response.setStatus(401);
+			return null;
+		}
+		
 	}
 	
 	@PostMapping("/users")
@@ -79,7 +84,7 @@ public class UsersController {
 	public User getUserDetails(@PathVariable long userId,HttpServletResponse response) {
 		try {
 			return this.userDao.getUserById(userId);
-		} catch (UserException e) {
+		} catch (UserException | SQLException e) {
 			response.setStatus(404);
 			return null;
 		}
