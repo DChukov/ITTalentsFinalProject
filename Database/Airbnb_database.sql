@@ -123,20 +123,20 @@ UNLOCK TABLES;
 -- Table structure for table `message`
 --
 
-DROP TABLE IF EXISTS `message`;
+DROP TABLE IF EXISTS `messages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
-CREATE TABLE `message` (
-  `message_id` int(11) NOT NULL,
+CREATE TABLE `messages` (
+  `message_id` int(11) NOT NULL AUTO_INCREMENT,
   `sender_id` int(11) NOT NULL,
-  `reciever_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
   `text` text NOT NULL,
   `date_time` datetime NOT NULL,
   PRIMARY KEY (`message_id`),
   KEY `fk_message_users1_idx` (`sender_id`),
-  KEY `fk_message_users2_idx` (`reciever_id`),
+  KEY `fk_message_users2_idx` (`receiver_id`),
   CONSTRAINT `fk_message_users1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `fk_message_users2` FOREIGN KEY (`reciever_id`) REFERENCES `users` (`user_id`)
+  CONSTRAINT `fk_message_users2` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -144,9 +144,9 @@ CREATE TABLE `message` (
 -- Dumping data for table `message`
 --
 
-LOCK TABLES `message` WRITE;
-/*!40000 ALTER TABLE `message` DISABLE KEYS */;
-/*!40000 ALTER TABLE `message` ENABLE KEYS */;
+LOCK TABLES `messages` WRITE;
+/*!40000 ALTER TABLE `messages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -278,9 +278,9 @@ CREATE TABLE `users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `first_name` varchar(45) NOT NULL,
   `last_name` varchar(45) NOT NULL,
-  `pasword` varchar(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
   `email` varchar(45) NOT NULL,
-  `birth_date` date DEFAULT NULL,
+  `birth_date` date NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
