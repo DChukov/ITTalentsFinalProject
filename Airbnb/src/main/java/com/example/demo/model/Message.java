@@ -12,10 +12,10 @@ import lombok.ToString;
 @ToString
 public class Message extends TextContent{
 
-//	private User receiver; 
+	private User receiver; 
 	
-	public Message(String content, String authorName,LocalDate time){
-		super(content,authorName,time);
-//		this.receiver = receiver;
+	public Message(String content, User sender,LocalDateTime localDate,User receiver){
+		super(content,sender,localDate);
+		this.receiver = receiver;
 	}
 }

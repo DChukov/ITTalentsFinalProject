@@ -56,8 +56,10 @@ public class UserDao {
 	}
 	
 	public User getUserById(long userId) throws UserException, SQLException {
+		if ( this.allUsersFromDB.isEmpty()) {
+			this.getAllUsers();
+		}
 		
-		this.getAllUsers();
 		
 		if(!this.allUsersFromDB.stream().anyMatch(user -> user.getId() == userId)) {
 			throw new UserException("No such user.");
@@ -85,6 +87,10 @@ public class UserDao {
 	}
 	
 	public User login(LoginDTO user) throws SQLException, UserException {
+		if ( this.allUsersFromDB.isEmpty()) {
+			this.getAllUsers();
+		}
+		
 		return this.allUsersFromDB.stream().filter(u -> (u.getEmail().equals(user.getEmail()) && u.getPassword().equals(user.getPassword()))).findFirst()
 		.get();
 	

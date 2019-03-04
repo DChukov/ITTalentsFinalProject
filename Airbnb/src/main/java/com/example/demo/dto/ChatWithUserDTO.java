@@ -10,10 +10,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ChatListDTO {
+public class ChatWithUserDTO {
 
-	private String userName;
-	private String lastMessage;
-	private LocalDateTime timeOfLastMessage;
-
+	private String senderName;
+	private String text;
+	private LocalDateTime time;
+	
 }

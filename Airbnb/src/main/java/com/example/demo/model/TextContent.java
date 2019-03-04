@@ -13,13 +13,13 @@ import lombok.ToString;
 @ToString
 public abstract class TextContent {
 
-	private String author;
+	private User author;
 	private String content;
-	private LocalDate time;
+	private LocalDateTime time;
 	
-	TextContent (String content, String author,LocalDate time) {
+	TextContent (String content, User sender,LocalDateTime localDateTime) {
 		this.setContent(content);
-		this.setAuthor(author);
-		this.time = time;
+		this.setAuthor(sender);
+		this.time = localDateTime;
 	}
 }
