@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.Getter;
@@ -11,10 +12,10 @@ import lombok.ToString;
 @ToString
 public class Message extends TextContent{
 
-	private User receiver; 
+//	private User receiver; 
 	
-	Message(String content, User author,User receiver){
-		super(content,author);
-		this.receiver = receiver;
+	public Message(String content, String authorName,LocalDate time){
+		super(content,authorName,time);
+//		this.receiver = receiver;
 	}
 }

@@ -12,9 +12,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ChatListDTO;
+import com.example.demo.model.Message;
 import com.example.demo.model.dao.MessageDao;
 import com.example.demo.model.dao.UserDao;
 import com.example.demo.model.dao.UserException;
@@ -46,12 +48,13 @@ public class MessageController {
 			return null;
 		}
 		catch (SQLException e) {
+			response.setStatus(401);
 			return messages;
 		}
 	}
 	
 	@GetMapping("/messages/{userId}")
-	public Set<ChatListDTO> getMessagesWithUserById(HttpServletRequest request,HttpServletResponse response){
+	public Set<Message> getMessagesWithUserById(@PathVariable long userId,HttpServletRequest request,HttpServletResponse response){
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
 			response.setStatus(401);
@@ -59,16 +62,15 @@ public class MessageController {
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
-		Set<ChatListDTO> messages = new HashSet<ChatListDTO>();
 		try {
-			messages = messageDao.getAllMessages(id);
-			return messages;
+			return messageDao.getMessagesWithUserById(id, userId);
 		} catch (UserException e) {
 			response.setStatus(401);
 			return null;
 		}
 		catch (SQLException e) {
-			return messages;
+			response.setStatus(401);
+			return null;
 		}
 	}
 }

@@ -23,6 +23,7 @@ import com.example.demo.model.dao.UserException;
 @RestController
 public class UsersController {
 	
+	
 	@Autowired
 	private UserDao userDao;
 	
@@ -47,6 +48,7 @@ public class UsersController {
 
 	@GetMapping("/users")
 	public List<User> getAllUsers(HttpServletResponse response){
+		
 		try {
 			return this.userDao.getAllUsers();
 		} catch (SQLException e) {
