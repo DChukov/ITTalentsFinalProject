@@ -22,9 +22,9 @@ import com.example.demo.dto.ChatListDTO;
 import com.example.demo.dto.ChatWithUserDTO;
 import com.example.demo.model.Message;
 import com.example.demo.model.User;
-import com.example.demo.model.dao.MessageDao;
-import com.example.demo.model.dao.UserDao;
-import com.example.demo.model.dao.UserException;
+import com.example.demo.dao.MessageDao;
+import com.example.demo.dao.UserDao;
+import com.example.demo.dao.UserException;
 
 @RestController
 public class MessageController {
