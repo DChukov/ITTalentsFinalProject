@@ -80,11 +80,11 @@ public class MessageController {
 	}
 	
 	@PostMapping("/messages/{receiverId}")
-	public void sendMessage(@PathVariable long receiverId,@RequestBody String text,HttpServletRequest request,HttpServletResponse response) {
+	public Set<ChatWithUserDTO> sendMessage(@PathVariable long receiverId,@RequestBody String text,HttpServletRequest request,HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
 			response.setStatus(401);
-			return;
+			return null;
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
@@ -92,11 +92,12 @@ public class MessageController {
 			messageDao.sendMessage(id, receiverId, text);
 		} catch (UserException e) {
 			response.setStatus(402);
-			return ;
+			return null;
 		}
 		catch (SQLException e) {
 			response.setStatus(403);
-			return ;
+			return null;
 		}
+		return this.getMessagesWithUserById(receiverId, request, response);
 	}
 }
