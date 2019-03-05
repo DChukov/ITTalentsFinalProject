@@ -31,4 +31,7 @@ public class User {
 		return this.email.equals(((User)obj).getEmail());
 	}
 	
+	public String getAllNames() {
+		return this.firstName + " " + this.lastName;
+	}
 }

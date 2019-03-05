@@ -24,7 +24,7 @@ import lombok.AllArgsConstructor;
 
 @Component
 public class UserDao {
-	
+
 
 	private List<User> allUsersFromDB;
 	
@@ -52,7 +52,10 @@ public class UserDao {
 		Connection con = jdbcTemplate.getDataSource().getConnection();
 		Statement statement = con.createStatement();
 		statement.executeUpdate("INSERT INTO users " + "VALUES (null, '" +user.getFirstName() + "', '" + user.getLastName() + "' , '" + user.getPassword() + "', '" +user.getEmail() + "' , '" + user.getBirthDate() + "' , '" + user.getPhone() + "')");
-		this.allUsersFromDB.add(user);
+		ResultSet rs = con.createStatement().executeQuery("SELECT * FROM users where email = '" + user.getEmail() + "';" );
+		if (rs.next()) {
+			this.allUsersFromDB.add(new User( rs.getLong(1),rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6).toLocalDate(), rs.getString(7)));
+		}
 	}
 	
 	public User getUserById(long userId) throws UserException, SQLException {

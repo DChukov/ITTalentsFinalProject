@@ -1,8 +1,13 @@
-package com.example.demo.model.dao;
+package com.example.demo.dao;
 
 public class ReviewException extends Exception {
 	
 	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5769133144826449278L;
 
 	public ReviewException() {
 		super();
