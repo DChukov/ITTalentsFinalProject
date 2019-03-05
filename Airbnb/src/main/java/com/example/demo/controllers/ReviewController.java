@@ -31,7 +31,7 @@ public class ReviewController {
 		try {
 			return reviewDao.getAllReviewsByRoomId(roomId);
 		} catch (SQLException | UserException e) {
-			// TODO Auto-generated catch block
+			response.setStatus(404);
 			e.printStackTrace();
 			return null;
 		}

@@ -49,11 +49,11 @@ public class MessageController {
 			messages = messageDao.getAllMessagesForMessagePage(id);
 			return messages;
 		} catch (UserException e) {
-			response.setStatus(401);
+			response.setStatus(404);
 			return null;
 		}
 		catch (SQLException e) {
-			response.setStatus(401);
+			response.setStatus(404);
 			return messages;
 		}
 	}
@@ -70,11 +70,11 @@ public class MessageController {
 		try {
 			return messageDao.getMessagesWithUserById(id, userId);
 		} catch (UserException e) {
-			response.setStatus(401);
+			response.setStatus(404);
 			return null;
 		}
 		catch (SQLException e) {
-			response.setStatus(401);
+			response.setStatus(404);
 			return null;
 		}
 	}
@@ -91,11 +91,11 @@ public class MessageController {
 		try {
 			messageDao.sendMessage(id, receiverId, text);
 		} catch (UserException e) {
-			response.setStatus(402);
+			response.setStatus(404);
 			return null;
 		}
 		catch (SQLException e) {
-			response.setStatus(403);
+			response.setStatus(404);
 			return null;
 		}
 		return this.getMessagesWithUserById(receiverId, request, response);
