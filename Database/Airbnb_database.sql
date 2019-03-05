@@ -25,9 +25,9 @@ DROP TABLE IF EXISTS `amenities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `amenities` (
-  `amenity_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
-  PRIMARY KEY (`amenity_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -48,16 +48,16 @@ DROP TABLE IF EXISTS `bookings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `bookings` (
-  `booking_id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
   `user_id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
-  PRIMARY KEY (`booking_id`),
+  PRIMARY KEY (`id`),
   KEY `fk_Bookings_Users1_idx` (`user_id`),
   KEY `fk_Bookings_Rooms1_idx` (`room_id`),
-  CONSTRAINT `fk_Bookings_Rooms1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`room_id`),
-  CONSTRAINT `fk_Bookings_Users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+  CONSTRAINT `fk_Bookings_Rooms1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`),
+  CONSTRAINT `fk_Bookings_Users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -78,9 +78,9 @@ DROP TABLE IF EXISTS `cities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `cities` (
-  `city_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
-  PRIMARY KEY (`city_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -101,12 +101,12 @@ DROP TABLE IF EXISTS `favourites`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `favourites` (
-  `rooms_room_id` int(11) NOT NULL,
-  `users_user_id` int(11) NOT NULL,
-  KEY `fk_table1_rooms1_idx` (`rooms_room_id`),
-  KEY `fk_table1_users1_idx` (`users_user_id`),
-  CONSTRAINT `fk_table1_rooms1` FOREIGN KEY (`rooms_room_id`) REFERENCES `rooms` (`room_id`),
-  CONSTRAINT `fk_table1_users1` FOREIGN KEY (`users_user_id`) REFERENCES `users` (`user_id`)
+  `rooms_id` int(11) NOT NULL,
+  `users_id` int(11) NOT NULL,
+  KEY `fk_table1_rooms1_idx` (`rooms_id`),
+  KEY `fk_table1_users1_idx` (`users_id`),
+  CONSTRAINT `fk_table1_rooms1` FOREIGN KEY (`rooms_id`) REFERENCES `rooms` (`id`),
+  CONSTRAINT `fk_table1_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -127,16 +127,16 @@ DROP TABLE IF EXISTS `messages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `messages` (
-  `message_id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `sender_id` int(11) NOT NULL,
   `receiver_id` int(11) NOT NULL,
   `text` text NOT NULL,
   `date_time` datetime NOT NULL,
-  PRIMARY KEY (`message_id`),
+  PRIMARY KEY (`id`),
   KEY `fk_message_users1_idx` (`sender_id`),
   KEY `fk_message_users2_idx` (`receiver_id`),
-  CONSTRAINT `fk_message_users1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `fk_message_users2` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`user_id`)
+  CONSTRAINT `fk_message_users1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_message_users2` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -157,12 +157,12 @@ DROP TABLE IF EXISTS `photos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `photos` (
-  `photo_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `url` text NOT NULL,
   `room_id` int(11) NOT NULL,
-  PRIMARY KEY (`photo_id`),
+  PRIMARY KEY (`id`),
   KEY `fk_photos_rooms1_idx` (`room_id`),
-  CONSTRAINT `fk_photos_rooms1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`room_id`)
+  CONSTRAINT `fk_photos_rooms1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -183,17 +183,17 @@ DROP TABLE IF EXISTS `review`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `review` (
-  `review_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` date NOT NULL,
   `text` varchar(100) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
-  ` stars` int(11) NOT NULL,
-  PRIMARY KEY (`review_id`),
+  `stars` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `fk_Review_Users1_idx` (`user_id`),
   KEY `fk_Review_Rooms1_idx` (`room_id`),
-  CONSTRAINT `fk_Review_Rooms1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`room_id`),
-  CONSTRAINT `fk_Review_Users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+  CONSTRAINT `fk_Review_Rooms1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`),
+  CONSTRAINT `fk_Review_Users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -214,7 +214,7 @@ DROP TABLE IF EXISTS `rooms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `rooms` (
-  `room_id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `address` varchar(45) NOT NULL,
   `guests` int(11) unsigned zerofill NOT NULL,
   `bedrooms` int(11) unsigned zerofill NOT NULL,
@@ -224,11 +224,11 @@ CREATE TABLE `rooms` (
   `details` varchar(100) NOT NULL,
   `city_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`room_id`),
+  PRIMARY KEY (`id`),
   KEY `fk_Rooms_Cities1_idx` (`city_id`),
   KEY `fk_Rooms_Users1_idx` (`user_id`),
-  CONSTRAINT `fk_Rooms_Cities1` FOREIGN KEY (`city_id`) REFERENCES `cities` (`city_id`),
-  CONSTRAINT `fk_Rooms_Users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+  CONSTRAINT `fk_Rooms_Cities1` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`),
+  CONSTRAINT `fk_Rooms_Users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -242,19 +242,19 @@ LOCK TABLES `rooms` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `roomsamenities`
+-- Table structure for table `rooms_amenities`
 --
 
-DROP TABLE IF EXISTS `roomsamenities`;
+DROP TABLE IF EXISTS `rooms_amenities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
-CREATE TABLE `roomsamenities` (
+CREATE TABLE `rooms_amenities` (
   `amenity_id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
-  KEY `fk_RoomsAmenities_Amenities1_idx` (`amenity_id`),
-  KEY `fk_RoomsAmenities_Rooms1_idx` (`room_id`),
-  CONSTRAINT `fk_RoomsAmenities_Amenities1` FOREIGN KEY (`amenity_id`) REFERENCES `amenities` (`amenity_id`),
-  CONSTRAINT `fk_RoomsAmenities_Rooms1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`room_id`)
+  KEY `fk_Rooms_Amenities_Amenities1_idx` (`amenity_id`),
+  KEY `fk_Rooms_Amenities_Rooms1_idx` (`room_id`),
+  CONSTRAINT `fk_Rooms_Amenities_Amenities1` FOREIGN KEY (`amenity_id`) REFERENCES `amenities` (`id`),
+  CONSTRAINT `fk_Rooms_Amenities_Rooms1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -262,9 +262,9 @@ CREATE TABLE `roomsamenities` (
 -- Dumping data for table `roomsamenities`
 --
 
-LOCK TABLES `roomsamenities` WRITE;
-/*!40000 ALTER TABLE `roomsamenities` DISABLE KEYS */;
-/*!40000 ALTER TABLE `roomsamenities` ENABLE KEYS */;
+LOCK TABLES `rooms_amenities` WRITE;
+/*!40000 ALTER TABLE `rooms_amenities` DISABLE KEYS */;
+/*!40000 ALTER TABLE `rooms_amenities` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -275,14 +275,14 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `users` (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `first_name` varchar(45) NOT NULL,
   `last_name` varchar(45) NOT NULL,
   `password` varchar(45) NOT NULL,
   `email` varchar(45) NOT NULL,
   `birth_date` date NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

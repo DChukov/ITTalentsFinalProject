@@ -1,4 +1,4 @@
-package com.example.demo.model.dao;
+package com.example.demo.dao;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

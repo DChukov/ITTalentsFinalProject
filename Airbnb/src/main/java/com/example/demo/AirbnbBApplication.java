@@ -1,14 +1,13 @@
 package com.example.demo;
 
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AribnbApplication {
+public class AirbnbBApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AribnbApplication.class, args);
+		SpringApplication.run(AirbnbBApplication.class, args);
 	}
 
 }

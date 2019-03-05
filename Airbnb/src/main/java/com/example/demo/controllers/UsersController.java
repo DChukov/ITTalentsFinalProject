@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.model.User;
-import com.example.demo.model.dao.UserDao;
-import com.example.demo.model.dao.UserException;
+import com.example.demo.dao.UserDao;
+import com.example.demo.dao.UserException;
 
 @RestController
 public class UsersController {

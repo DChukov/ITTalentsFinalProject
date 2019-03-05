@@ -1,4 +1,4 @@
-package com.example.demo.model.dao;
+package com.example.demo.dao;
 
 public class UserException extends Exception {
 
