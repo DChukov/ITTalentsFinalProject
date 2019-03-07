@@ -9,8 +9,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name="bookings")
+@Getter
+@Setter
 public class Booking {
 	
 	@Id
@@ -20,6 +25,6 @@ public class Booking {
 	private LocalDate startDate;
 	private LocalDate endDate;
 
-//	@ManyToOne
-//	private Room room;
+	@ManyToOne
+	private Room room;
 }

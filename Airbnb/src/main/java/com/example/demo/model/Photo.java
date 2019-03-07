@@ -7,8 +7,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name="photos")
+@Getter
+@Setter
 public class Photo {
 	
 	@Id
@@ -17,6 +22,6 @@ public class Photo {
 	
 	private String url;
 	
-//	@ManyToOne
-//	private Room room;
+	@ManyToOne
+	private Room room;
 }

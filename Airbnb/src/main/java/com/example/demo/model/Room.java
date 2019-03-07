@@ -12,7 +12,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 
@@ -20,29 +24,41 @@ import lombok.Setter;
 @Table(name = "rooms")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Room {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
+	@NonNull
 	private String address;
+	@NonNull
 	private int guests;
+	@NonNull
 	private int bedrooms;
+	@NonNull
 	private int beds;
+	@NonNull
 	private int baths;
+	@NonNull
 	private int price;
+	@NonNull
 	private String details;
 	
 //	@ManyToMany
 //	private Set<Amenity> amenities;
-//	
-//	@OneToMany
-//	private Set<Booking> bookings;
-//	
-//	@OneToMany
-//	private Set<Photo> photos;
-//	
+	
+	@OneToMany(mappedBy = "room")
+	private Set<Booking> bookings;
+	
+	@OneToMany(mappedBy = "room")
+	private Set<Photo> photos;
+	
+	@NonNull
 	@ManyToOne
 	private City city;
+	
+	private Long userId;
 	
 }

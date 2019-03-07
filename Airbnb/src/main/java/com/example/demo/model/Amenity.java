@@ -9,13 +9,18 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name="amenities")
+@Getter
+@Setter
 public class Amenity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long amenity_id;
+	private Long id;
 	
 	private String name;
 	
