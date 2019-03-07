@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +36,7 @@ public class UsersController {
 		} catch (SQLException | UserException e) {
 			response.setStatus(404);
 			e.printStackTrace();
+			return;
 		}
 		HttpSession session = request.getSession();
 		session.setAttribute("userId", u.getId());
@@ -47,7 +49,7 @@ public class UsersController {
 	}
 
 	@GetMapping("/users")
-	public List<User> getAllUsers(HttpServletResponse response){
+	public Set<User> getAllUsers(HttpServletResponse response){
 		
 		try {
 			return this.userDao.getAllUsers();
@@ -68,12 +70,8 @@ public class UsersController {
 		long id = (long) session.getAttribute("userId"); 
 		try {
 			return userDao.getUserById(id);
-		} catch (UserException e) {
-			response.setStatus(401);
-			return null;
-		}
-		catch (SQLException e) {
-			response.setStatus(401);
+		} catch (UserException | SQLException e) {
+			response.setStatus(404);
 			return null;
 		}
 		
@@ -101,11 +99,14 @@ public class UsersController {
 	}*/
 	
 	@PostMapping("/users")
-	public void addNewUser(@RequestBody User user){
+	public void signUp(@RequestBody User user,HttpServletResponse response){
 		try {
 			this.userDao.addUser(user);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			response.setStatus(404);
+			e.printStackTrace();
+		} catch (UserException e) {
+			response.setStatus(400);
 			e.printStackTrace();
 		};
 	}

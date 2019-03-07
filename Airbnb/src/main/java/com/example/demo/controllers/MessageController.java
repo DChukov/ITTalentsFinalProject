@@ -49,11 +49,11 @@ public class MessageController {
 			messages = messageDao.getAllMessagesForMessagePage(id);
 			return messages;
 		} catch (UserException e) {
-			response.setStatus(401);
+			response.setStatus(404);
 			return null;
 		}
 		catch (SQLException e) {
-			response.setStatus(401);
+			response.setStatus(404);
 			return messages;
 		}
 	}
@@ -70,33 +70,34 @@ public class MessageController {
 		try {
 			return messageDao.getMessagesWithUserById(id, userId);
 		} catch (UserException e) {
-			response.setStatus(401);
+			response.setStatus(404);
 			return null;
 		}
 		catch (SQLException e) {
-			response.setStatus(401);
+			response.setStatus(404);
 			return null;
 		}
 	}
 	
 	@PostMapping("/messages/{receiverId}")
-	public void sendMessage(@PathVariable long receiverId,@RequestBody String text,HttpServletRequest request,HttpServletResponse response) {
+	public Set<ChatWithUserDTO> sendMessage(@PathVariable long receiverId,@RequestBody String text,HttpServletRequest request,HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
 			response.setStatus(401);
-			return;
+			return null;
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
 		try {
 			messageDao.sendMessage(id, receiverId, text);
 		} catch (UserException e) {
-			response.setStatus(402);
-			return ;
+			response.setStatus(404);
+			return null;
 		}
 		catch (SQLException e) {
-			response.setStatus(403);
-			return ;
+			response.setStatus(404);
+			return null;
 		}
+		return this.getMessagesWithUserById(receiverId, request, response);
 	}
 }

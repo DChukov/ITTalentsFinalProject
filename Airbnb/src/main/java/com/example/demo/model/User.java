@@ -35,4 +35,15 @@ public class User {
 		return this.email.equals(((User)obj).getEmail());
 	}
 	
+	@Override
+	public int hashCode() {
+		return this.email.hashCode();
+	}
+	
+	public String getAllNames() {
+		return this.firstName + " " + this.lastName;
+	}
+	
+	
+	
 }
