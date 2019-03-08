@@ -32,7 +32,7 @@ public class Review {
 	private Long id;
 	
 	@NonNull
-	private LocalDateTime dateTime;
+	private LocalDateTime date;
 	
 	@NonNull
 	private String text;

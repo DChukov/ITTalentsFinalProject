@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.LoginDTO;
+import com.example.demo.exceptions.SignUpException;
 import com.example.demo.exceptions.UserException;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
@@ -35,9 +36,9 @@ public class UserController {
 	@PostMapping("/users")
 	public long signUp(@RequestBody User user,HttpServletResponse response){
 		try {
-			return userService.addUser(user);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			return userService.signup(user);
+		} catch (SignUpException e) {
+			response.setStatus(400);
 			e.printStackTrace();
 		}
 		return 0;
@@ -57,12 +58,25 @@ public class UserController {
 	
 	@GetMapping("/users/{userId}")
 	public User getUserDetails(@PathVariable long userId,HttpServletResponse response) {
-		return userService.getUserById(userId);
+		try {
+			return userService.getUserById(userId);
+		} catch (UserException e) {
+			response.setStatus(404);
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@PostMapping("/login")
 	public void login(@RequestBody LoginDTO user, HttpServletRequest request,HttpServletResponse response) {
-		User u = userService.login(user);
+		User u = null;
+		try {
+			u = userService.login(user);
+		} catch (UserException e) {
+			response.setStatus(404);
+			e.printStackTrace();
+			return;
+		}
 		HttpSession session = request.getSession();
 		session.setAttribute("userId", u.getId());
 	}
@@ -82,92 +96,13 @@ public class UserController {
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
-		return userService.getUserById(id);
-		
-	}
-	
-/*	
-	@PostMapping("/login")
-	public void login(@RequestBody LoginDTO user, HttpServletRequest request,HttpServletResponse response) {
-		User u = null;
 		try {
-			u = userDao.login(user);
-		} catch (SQLException | UserException e) {
-			response.setStatus(404);
-			e.printStackTrace();
-			return;
-		}
-		HttpSession session = request.getSession();
-		session.setAttribute("userId", u.getId());
-	}
-	
-	@PostMapping("/logout")
-	public void logout(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		session.invalidate();
-	}
-*/
-	
-	
-/*	@GetMapping("/profile")
-	public User getUserProfile(HttpServletRequest request,HttpServletResponse response) {
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return null;
-		}
-		
-		long id = (long) session.getAttribute("userId"); 
-		try {
-			return userDao.getUserById(id);
-		} catch (UserException | SQLException e) {
-			response.setStatus(404);
-			return null;
-		}
-		
-	}
-	
-/*	@PutMapping("/changeInformation")
-	public void changeUserInformation(HttpServletRequest request,HttpServletResponse response) {
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return;
-		}
-		
-		long id = (long) session.getAttribute("userId"); 
-		try {
-			return userDao.getUserById(id);
+			return userService.getUserById(id);
 		} catch (UserException e) {
-			response.setStatus(401);
-			return null;
-		}
-		catch (SQLException e) {
-			response.setStatus(401);
-			return null;
-		}
-	}*/
-/*	
-	@PostMapping("/users")
-	public void signUp(@RequestBody User user,HttpServletResponse response){
-		try {
-			this.userDao.addUser(user);
-		} catch (SQLException e) {
 			response.setStatus(404);
 			e.printStackTrace();
-		} catch (UserException e) {
-			response.setStatus(400);
-			e.printStackTrace();
-		};
+		}
+		return null;
 	}
 	
-	@GetMapping("/users/{userId}")
-	public User getUserDetails(@PathVariable long userId,HttpServletResponse response) {
-		try {
-			return this.userDao.getUserById(userId);
-		} catch (UserException | SQLException e) {
-			response.setStatus(404);
-			return null;
-		}
-	}*/
 }

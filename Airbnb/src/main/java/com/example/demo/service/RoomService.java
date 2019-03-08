@@ -38,6 +38,7 @@ public class RoomService {
 	@Autowired
 	private CityRepository cityRepository;
 
+
 	@Autowired
 	private UserRepository userRepository;
 
@@ -48,6 +49,7 @@ public class RoomService {
 		return roomRepository.findAll().stream()
 				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), 1, 1))
 				.collect(Collectors.toList());
+
 	}
 
 	public RoomInfoDTO getRoomById(long id) throws RoomNotFoundException {

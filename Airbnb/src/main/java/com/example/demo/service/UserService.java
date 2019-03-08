@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.sql.SQLException;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.UserRepository;
 import com.example.demo.dto.LoginDTO;
+import com.example.demo.exceptions.SignUpException;
+import com.example.demo.exceptions.UserException;
 import com.example.demo.model.Room;
 import com.example.demo.model.User;
 
@@ -23,8 +26,15 @@ public class UserService {
 
 	}
 	
-	public long addUser(User user) throws SQLException {
+	public long signup(User user) throws SignUpException {
 		
+		if ( !this.isPasswordValid(user.getPassword()) || !this.isValidEmailAddress(user.getEmail())) {
+			throw new SignUpException("Invalid email or password");
+		}
+		
+		if (userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
+			throw new SignUpException("Email is already used");
+		}
 		
 		User result = new User(null, user.getFirstName(), user.getLastName(), user.getPassword(), user.getEmail(),
 				user.getBirthDate(), user.getPhone());
@@ -34,13 +44,26 @@ public class UserService {
 		return result.getId();
 	}
 	
-	public User getUserById(long userId) {
-		return userRepository.findById(userId);
+	public User getUserById(long userId) throws UserException {
+		User user = userRepository.findById(userId);
+		
+		if ( user == null) {
+			throw new UserException("User not found");
+		}
+		
+		return user;
 	}
 	
-	public User login(LoginDTO user) {
-		return userRepository.findAll().stream().filter(u -> (u.getEmail().equals(user.getEmail()) && u.getPassword().equals(user.getPassword()))).findFirst()
-				.get();
+	public User login(LoginDTO loginDTO) throws UserException {
+		User user = null;
+		try{
+			 user = userRepository.findAll().stream().filter(u -> (u.getEmail().equals(loginDTO.getEmail()) && u.getPassword().equals(loginDTO.getPassword()))).findFirst().get();
+		}
+		catch(NoSuchElementException e) {
+			throw new UserException("User not found");
+		}
+	
+		return user;
 	}
 	
 	public boolean isValidEmailAddress(String email) {
