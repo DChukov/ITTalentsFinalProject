@@ -21,5 +21,5 @@ public class RoomInfoDTO {
 	private int price;
 	private String details;
 	private Set<String> photos;
-//	private Set<Amenity> amenities;
+	private Set<String> amenities;
 }

@@ -187,6 +187,7 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`rooms_amenities` (
   `amenity_id` INT(11) NOT NULL,
   `room_id` INT(11) NOT NULL,
+  PRIMARY KEY (`amenity_id`,`room_id`),
   INDEX `fk_Rooms_Amenities_Amenities1_idx` (`amenity_id` ASC) VISIBLE,
   INDEX `fk_Rooms_Amenities_Rooms1_idx` (`room_id` ASC) VISIBLE,
   CONSTRAINT `fk_Rooms_Amenities_Amenities1`

@@ -2,11 +2,14 @@ package com.example.demo.model;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -46,8 +49,11 @@ public class Room {
 	@NonNull
 	private String details;
 	
-//	@ManyToMany
-//	private Set<Amenity> amenities;
+	@ManyToMany(cascade = {CascadeType.ALL})
+	@JoinTable(name ="rooms_amenities",
+	joinColumns = @JoinColumn(name = "room_id"),
+	inverseJoinColumns = @JoinColumn(name = "amenity_id"))
+	private Set<Amenity> amenities;
 	
 	@OneToMany(mappedBy = "room")
 	private Set<Booking> bookings;
