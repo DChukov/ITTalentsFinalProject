@@ -37,14 +37,7 @@ public class RoomService {
 
 	@Autowired
 	private CityRepository cityRepository;
-<<<<<<< HEAD
-	
-	public List<RoomListDTO> getRoomsForHomePage(){
-		return roomRepository.findAll()
-		.stream()
-		.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), 1, 1)
-		).collect(Collectors.toList());
-=======
+
 
 	@Autowired
 	private UserRepository userRepository;
@@ -56,7 +49,7 @@ public class RoomService {
 		return roomRepository.findAll().stream()
 				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), 1, 1))
 				.collect(Collectors.toList());
->>>>>>> 68ab3cfa7da3779f7c086795e1d190856920b5f4
+
 	}
 
 	public RoomInfoDTO getRoomById(long id) throws RoomNotFoundException {
