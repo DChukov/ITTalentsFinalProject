@@ -39,7 +39,7 @@ public class Review {
 	
 	@NonNull
 	@ManyToOne
-	private User author;
+	private User user;
 	
 	
 	@NonNull

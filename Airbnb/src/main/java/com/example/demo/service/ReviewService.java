@@ -44,7 +44,7 @@ public class ReviewService {
 		
 		allReviewsForRoom.add((ReviewsForRoomDTO) reviewRepository.findAll()
 				.stream()
-				.map(review -> new ReviewsForRoomDTO(review.getAuthor().getAllNames(), review.getDateTime(), review.getText())));
+				.map(review -> new ReviewsForRoomDTO(review.getUser().getAllNames(), review.getDateTime(), review.getText())));
 		
 		return allReviewsForRoom;
 	}

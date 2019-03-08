@@ -49,7 +49,7 @@ public class MessageService {
 				}
 				else { 
 					
-					userAllMessages.put(otherUserId, new TreeSet<Message>((m1,m2) -> m1.getTime().compareTo(m2.getTime())));
+					userAllMessages.put(otherUserId, new TreeSet<Message>((m1,m2) -> m1.getDateTime().compareTo(m2.getDateTime())));
 					userAllMessages.get(otherUserId).add(message);
 				}
 			}
@@ -69,7 +69,7 @@ public class MessageService {
 		for (Entry<Long, TreeSet<Message>> entry: userAllMessages.entrySet()) {
 			Message message = entry.getValue().last();
 			messagesList.add(new ChatListDTO(userRepository.findById(entry.getKey()).getAllNames()
-					,message.getText(),message.getTime()));
+					,message.getText(),message.getDateTime()));
 		}
 		return messagesList;
 	}
@@ -78,7 +78,7 @@ public class MessageService {
 
 		
 		Set<ChatWithUserDTO> chat = new  TreeSet<ChatWithUserDTO>((m1,m2) -> m1.getTime().compareTo(m2.getTime()));
-		Set<Message> messages = new TreeSet<Message>((m1,m2) -> m1.getTime().compareTo(m2.getTime()));
+		Set<Message> messages = new TreeSet<Message>((m1,m2) -> m1.getDateTime().compareTo(m2.getDateTime()));
 
 		messages = this.getUserAllMessages(userId).get(otherUserId);
 		if ( messages == null) {
@@ -87,7 +87,7 @@ public class MessageService {
 		
 		for ( Message m : messages) {
 			chat.add(new ChatWithUserDTO(userRepository.findById(m.getSenderId()).getAllNames(),
-					m.getText(), m.getTime()));
+					m.getText(), m.getDateTime()));
 		}
 		return chat;
 	}
