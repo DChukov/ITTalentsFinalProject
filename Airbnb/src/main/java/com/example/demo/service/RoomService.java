@@ -3,12 +3,13 @@ package com.example.demo.service;
 import com.example.demo.dao.CityRepository;
 import com.example.demo.dao.PhotoRepository;
 import com.example.demo.dao.RoomRepository;
-import com.example.demo.dao.UserDao;
-import com.example.demo.dao.UserException;
+//import com.example.demo.dao.UserDao;
+import com.example.demo.dao.UserRepository;
 import com.example.demo.dto.RoomAddDTO;
 import com.example.demo.dto.RoomInfoDTO;
 import com.example.demo.dto.RoomListDTO;
 import com.example.demo.exceptions.RoomNotFoundException;
+import com.example.demo.exceptions.UserException;
 import com.example.demo.model.Photo;
 import com.example.demo.model.Room;
 
@@ -35,8 +36,9 @@ public class RoomService {
 	@Autowired
 	private CityRepository cityRepository;
 	
-	@Autowired
-	private UserDao userDao;
+//	@Autowired
+//	private UserRepository userRepository;
+//	private UserDao userDao;
 	
 	public List<RoomListDTO> getRoomsForHomePage(){
 		return roomRepository.findAll()

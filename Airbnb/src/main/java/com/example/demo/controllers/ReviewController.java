@@ -14,31 +14,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dao.ReviewDao;
-import com.example.demo.dao.UserException;
 import com.example.demo.dto.ReviewsForRoomDTO;
+import com.example.demo.dto.WriteReviewDTO;
+import com.example.demo.exceptions.UserException;
 import com.example.demo.model.Review;
 import com.example.demo.model.User;
+import com.example.demo.service.ReviewService;
+import com.example.demo.service.RoomService;
 
 @RestController
 public class ReviewController {
 
 	@Autowired
-	private ReviewDao reviewDao;
+	private ReviewService reviewService;
 	
 	@GetMapping("/rooms/{roomId}/reviews")
 	public Set<ReviewsForRoomDTO> getAllReviewsByRoomId(@PathVariable int roomId,HttpServletResponse response){
-		try {
-			return reviewDao.getAllReviewsByRoomId(roomId);
-		} catch (SQLException | UserException e) {
-			response.setStatus(404);
-			e.printStackTrace();
-			return null;
-		}
+		return reviewService.getAllReviewsByRoomId(roomId);
 	}
 	
 	@PostMapping("/rooms/{roomId}/reviews")
-	public Set<ReviewsForRoomDTO> addReviewForRoom(@PathVariable int roomId, @RequestBody Review review,HttpServletRequest request,HttpServletResponse response){
+	public Set<ReviewsForRoomDTO> addReviewForRoom(@PathVariable int roomId, @RequestBody WriteReviewDTO reviewDTO,HttpServletRequest request,HttpServletResponse response){
 		
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
@@ -47,15 +43,9 @@ public class ReviewController {
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
-		try {
-			reviewDao.addReviewForRoom(id, roomId,review);
-		} catch (SQLException e) {
-			response.setStatus(404);
-			return null;
-		}
-		return this.getAllReviewsByRoomId(roomId, response);
-		
-		
+		 reviewService.addReviewForRoom(id, roomId, reviewDTO);
+		 return this.getAllReviewsByRoomId(roomId, response);
+
 	
 	}
 }

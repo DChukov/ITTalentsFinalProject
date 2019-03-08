@@ -1,4 +1,4 @@
-package com.example.demo.dao;
+package com.example.demo.exceptions;
 
 public class ReviewException extends Exception {
 	
