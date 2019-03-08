@@ -1,31 +1,50 @@
 package com.example.demo.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.example.demo.dao.ReviewException;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+import com.example.demo.exceptions.ReviewException;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
-@Setter
+@Entity
+@Table(name = "reviews")
 @Getter
-@ToString
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review {
 	
-	private String text;
-	private int stars;
-
-	Review(String text, int stars) throws ReviewException {
-		this.text = text;
-		this.setStars(stars);
-	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 	
-	void setStars(int stars) throws ReviewException{
-		if ( stars > 5 || stars < 1 ) {
-			throw new ReviewException("Wrong number of stars for the review");
-		}
-		this.stars = stars;
-	}
-
+	@NonNull
+	private LocalDateTime dateTime;
+	
+	@NonNull
+	private String text;
+	
+	@NonNull
+	@ManyToOne
+	private User author;
+	
+	
+	@NonNull
+	@ManyToOne
+	private Room room;
+	
+	private int stars;
 }

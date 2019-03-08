@@ -17,17 +17,76 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.LoginDTO;
+import com.example.demo.exceptions.UserException;
 import com.example.demo.model.User;
-import com.example.demo.dao.UserDao;
-import com.example.demo.dao.UserException;
+import com.example.demo.service.UserService;
+import com.example.demo.dao.UserRepository;
 
 @RestController
-public class UsersController {
+public class UserController {
 	
 	
 	@Autowired
-	private UserDao userDao;
+	private UserService userService;
 	
+	
+	
+	
+	@PostMapping("/users")
+	public long signUp(@RequestBody User user,HttpServletResponse response){
+		try {
+			return userService.addUser(user);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	@GetMapping("/users")
+	public Set<User> getAllUsers(HttpServletResponse response){
+		
+		try {
+			return userService.getAllUsers();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@GetMapping("/users/{userId}")
+	public User getUserDetails(@PathVariable long userId,HttpServletResponse response) {
+		return userService.getUserById(userId);
+	}
+	
+	@PostMapping("/login")
+	public void login(@RequestBody LoginDTO user, HttpServletRequest request,HttpServletResponse response) {
+		User u = userService.login(user);
+		HttpSession session = request.getSession();
+		session.setAttribute("userId", u.getId());
+	}
+	
+	@PostMapping("/logout")
+	public void logout(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.invalidate();
+	}
+	
+	@GetMapping("/profile")
+	public User getUserProfile(HttpServletRequest request,HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") == null) {
+			response.setStatus(401);
+			return null;
+		}
+		
+		long id = (long) session.getAttribute("userId"); 
+		return userService.getUserById(id);
+		
+	}
+	
+/*	
 	@PostMapping("/login")
 	public void login(@RequestBody LoginDTO user, HttpServletRequest request,HttpServletResponse response) {
 		User u = null;
@@ -47,19 +106,10 @@ public class UsersController {
 		HttpSession session = request.getSession();
 		session.invalidate();
 	}
-
-	@GetMapping("/users")
-	public Set<User> getAllUsers(HttpServletResponse response){
-		
-		try {
-			return this.userDao.getAllUsers();
-		} catch (SQLException e) {
-			response.setStatus(404);
-			return null;
-		}
-	}
+*/
 	
-	@GetMapping("/profile")
+	
+/*	@GetMapping("/profile")
 	public User getUserProfile(HttpServletRequest request,HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
@@ -97,7 +147,7 @@ public class UsersController {
 			return null;
 		}
 	}*/
-	
+/*	
 	@PostMapping("/users")
 	public void signUp(@RequestBody User user,HttpServletResponse response){
 		try {
@@ -119,5 +169,5 @@ public class UsersController {
 			response.setStatus(404);
 			return null;
 		}
-	}
+	}*/
 }
