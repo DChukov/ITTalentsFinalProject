@@ -36,10 +36,6 @@ public class RoomService {
 	@Autowired
 	private CityRepository cityRepository;
 	
-//	@Autowired
-//	private UserRepository userRepository;
-//	private UserDao userDao;
-	
 	public List<RoomListDTO> getRoomsForHomePage(){
 		return roomRepository.findAll()
 		.stream()

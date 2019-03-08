@@ -42,7 +42,7 @@ public class Message {
 	private String text;
 	
 	@NonNull
-	private LocalDateTime time;
+	private LocalDateTime DateTime;
 	
 	
 	

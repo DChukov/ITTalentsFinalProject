@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.WriteReviewDTO;
+import com.example.demo.exceptions.RoomNotFoundException;
 import com.example.demo.exceptions.UserException;
 import com.example.demo.model.Review;
 import com.example.demo.model.User;
@@ -30,7 +31,13 @@ public class ReviewController {
 	
 	@GetMapping("/rooms/{roomId}/reviews")
 	public Set<ReviewsForRoomDTO> getAllReviewsByRoomId(@PathVariable int roomId,HttpServletResponse response){
-		return reviewService.getAllReviewsByRoomId(roomId);
+		try {
+			return reviewService.getAllReviewsByRoomId(roomId);
+		} catch (RoomNotFoundException e) {
+			response.setStatus(404);
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@PostMapping("/rooms/{roomId}/reviews")
@@ -43,7 +50,12 @@ public class ReviewController {
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
-		 reviewService.addReviewForRoom(id, roomId, reviewDTO);
+		 try {
+			reviewService.addReviewForRoom(id, roomId, reviewDTO);
+		} catch (RoomNotFoundException e) {
+			response.setStatus(404);
+			e.printStackTrace();
+		}
 		 return this.getAllReviewsByRoomId(roomId, response);
 
 	
