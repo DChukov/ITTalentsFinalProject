@@ -24,6 +24,6 @@ public class Amenity {
 	
 	private String name;
 	
-//	@ManyToMany
-//	private Set<Room> rooms;
+	@ManyToMany(mappedBy = "amenities")
+	private Set<Room> rooms;
 }

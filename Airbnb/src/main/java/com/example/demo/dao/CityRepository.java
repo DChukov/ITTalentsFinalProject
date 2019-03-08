@@ -9,5 +9,6 @@ import com.example.demo.model.City;
 public interface CityRepository extends JpaRepository<City, Integer>{
 
 	City findById(long id);
+	City findByName(String name);
 
 }
