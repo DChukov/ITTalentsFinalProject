@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.EditProfileDTO;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.dto.UserProfileDTO;
 import com.example.demo.exceptions.SignUpException;
@@ -35,7 +36,13 @@ public class UserController {
 	
 	
 	@PostMapping("/users")
-	public long signUp(@RequestBody User user,HttpServletResponse response){
+	public long signUp(@RequestBody User user,HttpServletResponse response,HttpServletRequest request){
+		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") == null) {
+			response.setStatus(404);
+			return 0;
+		}
+		
 		try {
 			return userService.signup(user);
 		} catch (SignUpException e) {
@@ -83,11 +90,32 @@ public class UserController {
 	}
 	
 	@PostMapping("/logout")
-	public void logout(HttpServletRequest request) {
+	public void logout(HttpServletRequest request,HttpServletResponse response) {
 		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") == null) {
+			response.setStatus(404);
+			return;
+		}
 		session.invalidate();
 	}
 	
+	@PutMapping("/changeInformation")
+	public UserProfileDTO changeInformation(@RequestBody EditProfileDTO editProfileDTO,HttpServletRequest request,HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") == null) {
+			response.setStatus(401);
+			return null;
+		}
+		
+		long id = (long) session.getAttribute("userId"); 
+		try {
+			return userService.changeInformation(id, editProfileDTO);
+		} catch (UserException e) {
+			response.setStatus(404);
+			e.printStackTrace();
+		}
+		return null;
+	}
 	@GetMapping("/profile")
 	public UserProfileDTO getUserProfile(HttpServletRequest request,HttpServletResponse response) {
 		HttpSession session = request.getSession();
@@ -104,6 +132,6 @@ public class UserController {
 			e.printStackTrace();
 		}
 		return null;
-	}
 	
+	}
 }

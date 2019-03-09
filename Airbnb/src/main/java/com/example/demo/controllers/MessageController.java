@@ -58,6 +58,10 @@ public class MessageController {
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
+		if ( id == userId) {
+			response.setStatus(400);
+			return null;
+		}
 		try {
 			return messageService.getMessagesWithUserById(id, userId);
 		} catch (NoMessagesException e) {
@@ -75,6 +79,10 @@ public class MessageController {
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
+		if ( id == receiverId) {
+			response.setStatus(400);
+			return null;
+		}
 		try {
 			messageService.sendMessage(id, receiverId, text);
 		} catch (UserException e) {

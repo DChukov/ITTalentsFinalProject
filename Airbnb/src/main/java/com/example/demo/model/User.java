@@ -46,6 +46,7 @@ public class User {
 	@NonNull
 	private LocalDate birthDate;
 	
+	@NonNull
 	private String phone;
 	
 	

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.UserRepository;
+import com.example.demo.dto.EditProfileDTO;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.RoomListDTO;
@@ -75,6 +76,12 @@ public class UserService {
 		return user;
 	}
 	
+	public UserProfileDTO changeInformation(long userId, EditProfileDTO editProfileDTO) throws UserException {
+		User user = new User(userId, editProfileDTO.getFirstName(),editProfileDTO.getLastName(),editProfileDTO.getPassword(),editProfileDTO.getEmail(),
+				editProfileDTO.getBirthDate(),editProfileDTO.getPhone());
+		userRepository.save(user);
+		return this.getUserById(userId);
+	}
 	
 	public boolean isValidEmailAddress(String email) {
         String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
