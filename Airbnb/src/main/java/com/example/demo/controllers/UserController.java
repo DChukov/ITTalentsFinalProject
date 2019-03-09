@@ -20,7 +20,9 @@ import com.example.demo.dto.EditProfileDTO;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.dto.RoomListDTO;
 import com.example.demo.dto.UserProfileDTO;
+import com.example.demo.exceptions.BadRequestException;
 import com.example.demo.exceptions.SignUpException;
+import com.example.demo.exceptions.UnauthorizedException;
 import com.example.demo.exceptions.UserException;
 import com.example.demo.model.User;
 import com.example.demo.service.RoomService;
@@ -39,116 +41,71 @@ public class UserController {
 	
 	
 	@PostMapping("/users")
-	public long signUp(@RequestBody User user,HttpServletResponse response,HttpServletRequest request){
+	public long signUp(@RequestBody User user,HttpServletResponse response,HttpServletRequest request) throws SignUpException, BadRequestException{
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") != null) {
-			response.setStatus(403);
-			return 0;
+			throw new BadRequestException("User is already logged in");
 		}
+		return userService.signup(user);
 		
-		try {
-			return userService.signup(user);
-		} catch (SignUpException e) {
-			response.setStatus(400);
-			e.printStackTrace();
-		}
-		return 0;
 	}
 	
 	@GetMapping("/users")
 	public Set<User> getAllUsers(HttpServletResponse response){
-		
-		try {
-			return userService.getAllUsers();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return userService.getAllUsers();
 	}
 	
 	@GetMapping("/users/{userId}")
-	public UserProfileDTO getUserDetails(@PathVariable long userId,HttpServletResponse response) {
-		try {
-			UserProfileDTO result = userService.getUserById(userId);
-			return result; 
-		} catch (UserException e) {
-			response.setStatus(404);
-			e.printStackTrace();
-		}
-		return null;
+	public UserProfileDTO getUserDetails(@PathVariable long userId,HttpServletResponse response) throws UserException {
+		return userService.getUserById(userId);
 	}
 	
 	@PostMapping("/login")
-	public void login(@RequestBody LoginDTO user, HttpServletRequest request,HttpServletResponse response) {
+	public void login(@RequestBody LoginDTO user, HttpServletRequest request,HttpServletResponse response) throws UserException, BadRequestException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") != null) {
-			response.setStatus(400);
-			return;
+			throw new BadRequestException("User is already logged in!");
 		}
-		User u = null;
-		try {
-			u = userService.login(user);
-		} catch (UserException e) {
-			response.setStatus(404);
-			e.printStackTrace();
-			return;
-		}
+		User u = userService.login(user);
 		session = request.getSession();
 		session.setAttribute("userId", u.getId());
 	}
 	
 	@PostMapping("/logout")
-	public void logout(HttpServletRequest request,HttpServletResponse response) {
+	public void logout(HttpServletRequest request,HttpServletResponse response) throws BadRequestException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(400);
-			return;
+			throw new BadRequestException("You must login first");
 		}
 		session.invalidate();
 	}
 	
 	@PutMapping("/changeInformation")
-	public UserProfileDTO changeInformation(@RequestBody EditProfileDTO editProfileDTO,HttpServletRequest request,HttpServletResponse response) {
+	public UserProfileDTO changeInformation(@RequestBody EditProfileDTO editProfileDTO,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return null;
+			throw new UnauthorizedException("You must login first");
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
-		try {
-			return userService.changeInformation(id, editProfileDTO);
-		} catch (UserException e) {
-			response.setStatus(404);
-			e.printStackTrace();
-		}
-		return null;
+		return userService.changeInformation(id, editProfileDTO);
 	}
 	@GetMapping("/profile")
-	public UserProfileDTO getUserProfile(HttpServletRequest request,HttpServletResponse response) {
+	public UserProfileDTO getUserProfile(HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return null;
+			throw new UnauthorizedException("You must login first");
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
-		try {
-			return userService.getUserById(id);
-		} catch (UserException e) {
-			response.setStatus(404);
-			e.printStackTrace();
-		}
-		return null;
-	
+		return userService.getUserById(id);
 	}
 	
 	@GetMapping("/viewFavourites")
-	public List<RoomListDTO> viewFavourites(HttpServletRequest request,HttpServletResponse response){
+	public List<RoomListDTO> viewFavourites(HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException{
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return null;
+			throw new UnauthorizedException("You must login first");
 		}
 		
 		long id = (long) session.getAttribute("userId"); 

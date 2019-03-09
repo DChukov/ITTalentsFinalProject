@@ -32,7 +32,7 @@ public class UserService {
 	@Autowired
 	private ReviewService reviewService;
 	
-	public Set<User> getAllUsers() throws SQLException{
+	public Set<User> getAllUsers(){
 		return userRepository.findAll().stream().collect(Collectors.toSet());
 
 	}

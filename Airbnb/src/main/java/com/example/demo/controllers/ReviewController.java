@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dao.RoomRepository;
 import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.WriteReviewDTO;
-import com.example.demo.exceptions.ReviewException;
 import com.example.demo.exceptions.RoomNotFoundException;
+import com.example.demo.exceptions.UnauthorizedException;
 import com.example.demo.exceptions.UserException;
 import com.example.demo.model.Review;
 import com.example.demo.model.User;
@@ -37,36 +37,24 @@ public class ReviewController {
 	
 	
 	@GetMapping("/rooms/{roomId}/reviews")
-	public Set<ReviewsForRoomDTO> getAllReviewsByRoomId(@PathVariable long roomId,HttpServletResponse response){
-		try {
-			return reviewService.getAllReviewsByRoomId(roomId);
-		} catch (RoomNotFoundException e) {
-			response.setStatus(404);
-			e.printStackTrace();
-		}
-		return null;
+	public Set<ReviewsForRoomDTO> getAllReviewsByRoomId(@PathVariable long roomId,HttpServletResponse response) throws RoomNotFoundException{
+		return reviewService.getAllReviewsByRoomId(roomId);
 	}
 	
 	@PostMapping("/rooms/{roomId}/reviews")
-	public Set<ReviewsForRoomDTO> addReviewForRoom(@PathVariable int roomId, @RequestBody WriteReviewDTO reviewDTO,HttpServletRequest request,HttpServletResponse response) throws ReviewException{
+	public Set<ReviewsForRoomDTO> addReviewForRoom(@PathVariable int roomId, @RequestBody WriteReviewDTO reviewDTO,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, RoomNotFoundException{
 		
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return null;
+			throw new UnauthorizedException("You must login first");
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
 		if ( roomRepository.findById(roomId).getUserId() == id) {
-			response.setStatus(400);			
+			throw new UnauthorizedException("User can not add review for his own room!");		
 		}
-		 try {
-			reviewService.addReviewForRoom(id, roomId, reviewDTO);
-		} catch (RoomNotFoundException e) {
-			response.setStatus(404);
-			e.printStackTrace();
-		}
-		 return this.getAllReviewsByRoomId(roomId, response);
+		reviewService.addReviewForRoom(id, roomId, reviewDTO);
+		return this.getAllReviewsByRoomId(roomId, response);
 
 	
 	}

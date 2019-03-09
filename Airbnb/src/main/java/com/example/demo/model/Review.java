@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.example.demo.exceptions.ReviewException;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.ChatListDTO;
 import com.example.demo.dto.ChatWithUserDTO;
 import com.example.demo.exceptions.NoMessagesException;
+import com.example.demo.exceptions.UnauthorizedException;
 import com.example.demo.exceptions.UserException;
 import com.example.demo.model.Message;
 import com.example.demo.model.User;
@@ -37,11 +38,10 @@ public class MessageController {
 	
 	
 	@GetMapping("/messages")
-	public Set<ChatListDTO> getAllMessages(HttpServletRequest request,HttpServletResponse response){
+	public Set<ChatListDTO> getAllMessages(HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException{
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return null;
+			throw new UnauthorizedException("You must login first");
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
@@ -50,45 +50,31 @@ public class MessageController {
 	}
 	
 	@GetMapping("/messages/{userId}")
-	public Set<ChatWithUserDTO> getMessagesWithUserById(@PathVariable long userId,HttpServletRequest request,HttpServletResponse response){
+	public Set<ChatWithUserDTO> getMessagesWithUserById(@PathVariable long userId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, NoMessagesException{
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return null;
+			throw new UnauthorizedException("You must login first");
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
 		if ( id == userId) {
-			response.setStatus(400);
-			return null;
+			throw new UnauthorizedException("User can not have messages with himself!");
 		}
-		try {
-			return messageService.getMessagesWithUserById(id, userId);
-		} catch (NoMessagesException e) {
-			response.setStatus(404);
-			return null;
-		}
+		return messageService.getMessagesWithUserById(id, userId);
 	}
 	
 	@PostMapping("/messages/{receiverId}")
-	public Set<ChatWithUserDTO> sendMessage(@PathVariable long receiverId,@RequestBody String text,HttpServletRequest request,HttpServletResponse response) {
+	public Set<ChatWithUserDTO> sendMessage(@PathVariable long receiverId,@RequestBody String text,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, NoMessagesException, UserException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return null;
+			throw new UnauthorizedException("You must login first");
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
 		if ( id == receiverId) {
-			response.setStatus(400);
-			return null;
+			throw new UnauthorizedException("User can not send message to himself!");
 		}
-		try {
-			messageService.sendMessage(id, receiverId, text);
-		} catch (UserException e) {
-			response.setStatus(404);
-			e.printStackTrace();
-		}
+		messageService.sendMessage(id, receiverId, text);
 		return this.getMessagesWithUserById(receiverId, request, response);
 	}
 }

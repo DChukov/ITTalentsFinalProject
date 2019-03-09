@@ -6,6 +6,7 @@ import com.example.demo.dao.RoomRepository;
 import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.RoomListDTO;
 import com.example.demo.exceptions.RoomNotFoundException;
+import com.example.demo.exceptions.UnauthorizedException;
 import com.example.demo.exceptions.UserException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,21 +34,14 @@ public class RoomController {
 	private RoomService roomService;
 	
 	@GetMapping("/rooms/{roomId}/addInFavourites")
-	public List<RoomListDTO> addRoomInFavourites(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response){
+	public List<RoomListDTO> addRoomInFavourites(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException{
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return null;
+			throw new UnauthorizedException("You must login first");
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
-		try {
-			return roomService.addRoomInFavourites(id, roomId);
-		} catch (UserException e) {
-			response.setStatus(400);
-			e.printStackTrace();
-		}
-		return null;
+		return roomService.addRoomInFavourites(id, roomId);
 	}
 	
 	@GetMapping("/rooms")
@@ -66,11 +60,10 @@ public class RoomController {
 	}
 	
 	@PostMapping("/rooms/create")
-	public long createRoom(@RequestBody RoomAddDTO newRoom,HttpServletRequest request,HttpServletResponse response) throws UserException, SQLException {
+	public long createRoom(@RequestBody RoomAddDTO newRoom,HttpServletRequest request,HttpServletResponse response) throws UserException, SQLException, UnauthorizedException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return 0;
+			throw new UnauthorizedException("You must login first");
 		}
 		
 		long id = (long) session.getAttribute("userId"); 
@@ -78,19 +71,13 @@ public class RoomController {
 	}
 	
 	@PostMapping("/rooms/delete/{roomId}")
-	public void deleteRoom(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response) {
+	public void deleteRoom(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			return;
+			throw new UnauthorizedException("You must login first");
 		}
 		long id = (long) session.getAttribute("userId"); 
-		try {
-			roomService.removeRoom(roomId,id);
-		} catch (UserException e) {
-			response.setStatus(401);
-			e.printStackTrace();
-		}
+		roomService.removeRoom(roomId,id);
 	}
 	
 	@GetMapping("/rooms/cityName={cityName}")
