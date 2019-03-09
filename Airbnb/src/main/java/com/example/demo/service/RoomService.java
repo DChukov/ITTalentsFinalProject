@@ -43,6 +43,8 @@ public class RoomService {
 	@Autowired
 	private ReviewService reviewService;
 
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -84,7 +86,7 @@ public class RoomService {
 		}
 		Room result = new Room(null, room.getAddress(), room.getGuests(), room.getBedrooms(), room.getBeds(),
 				room.getBaths(), room.getPrice(), room.getDetails(), room.getAmenities(), null, null,
-				cityRepository.findByName(room.getCity().toLowerCase()), userId);
+				cityRepository.findByName(room.getCity().toLowerCase()), userId,null);
 
 		roomRepository.saveAndFlush(result);
 
@@ -116,4 +118,17 @@ public class RoomService {
 				}).flatMap(Set::stream)
 				.collect(Collectors.toSet());
 	}
+	
+	public List<RoomListDTO> addRoomInFavourites(long userId, long roomId) throws UserException{
+		if ( roomRepository.findById(roomId).getUserId() == userId) {
+			throw new UserException("User can not put his own room in Favourites!");
+		}
+		userRepository.findById(userId).getFavourites().add(roomRepository.findById(roomId));
+		userRepository.saveAndFlush(userRepository.findById(userId));
+		return userService.viewFavouritesRoom(userId);
+
+		
+	}
+	
+	
 }

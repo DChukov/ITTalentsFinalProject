@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ public class UserService {
 		}
 		
 		User result = new User(null, user.getFirstName(), user.getLastName(), user.getPassword(), user.getEmail(),
-				user.getBirthDate(), user.getPhone());
+				user.getBirthDate(), user.getPhone(),null);
 		
 		userRepository.saveAndFlush(result);
 		
@@ -78,9 +79,18 @@ public class UserService {
 	
 	public UserProfileDTO changeInformation(long userId, EditProfileDTO editProfileDTO) throws UserException {
 		User user = new User(userId, editProfileDTO.getFirstName(),editProfileDTO.getLastName(),editProfileDTO.getPassword(),editProfileDTO.getEmail(),
-				editProfileDTO.getBirthDate(),editProfileDTO.getPhone());
+				editProfileDTO.getBirthDate(),editProfileDTO.getPhone(),null);
 		userRepository.save(user);
 		return this.getUserById(userId);
+	}
+	
+	public List<RoomListDTO> viewFavouritesRoom(long userId){
+		return userRepository
+				.findById(userId)
+				.getFavourites()
+				.stream()
+				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), reviewService.getRoomRating(room.getId()), reviewService.getRoomTimesRated(room.getId())))
+				.collect(Collectors.toList());
 	}
 	
 	public boolean isValidEmailAddress(String email) {

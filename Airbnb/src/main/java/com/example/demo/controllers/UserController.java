@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.EditProfileDTO;
 import com.example.demo.dto.LoginDTO;
+import com.example.demo.dto.RoomListDTO;
 import com.example.demo.dto.UserProfileDTO;
 import com.example.demo.exceptions.SignUpException;
 import com.example.demo.exceptions.UserException;
 import com.example.demo.model.User;
+import com.example.demo.service.RoomService;
 import com.example.demo.service.UserService;
 import com.example.demo.dao.UserRepository;
 
@@ -32,14 +34,15 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	
+	@Autowired
+	private RoomService roomService;
 	
 	
 	@PostMapping("/users")
 	public long signUp(@RequestBody User user,HttpServletResponse response,HttpServletRequest request){
 		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			response.setStatus(404);
+		if (session.getAttribute("userId") != null) {
+			response.setStatus(400);
 			return 0;
 		}
 		
@@ -77,6 +80,11 @@ public class UserController {
 	
 	@PostMapping("/login")
 	public void login(@RequestBody LoginDTO user, HttpServletRequest request,HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") != null) {
+			response.setStatus(400);
+			return;
+		}
 		User u = null;
 		try {
 			u = userService.login(user);
@@ -85,7 +93,7 @@ public class UserController {
 			e.printStackTrace();
 			return;
 		}
-		HttpSession session = request.getSession();
+		session = request.getSession();
 		session.setAttribute("userId", u.getId());
 	}
 	
@@ -93,7 +101,7 @@ public class UserController {
 	public void logout(HttpServletRequest request,HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
-			response.setStatus(404);
+			response.setStatus(400);
 			return;
 		}
 		session.invalidate();
@@ -133,5 +141,17 @@ public class UserController {
 		}
 		return null;
 	
+	}
+	
+	@GetMapping("/viewFavourites")
+	public List<RoomListDTO> viewFavourites(HttpServletRequest request,HttpServletResponse response){
+		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") == null) {
+			response.setStatus(401);
+			return null;
+		}
+		
+		long id = (long) session.getAttribute("userId"); 
+		return userService.viewFavouritesRoom(id);
 	}
 }

@@ -32,7 +32,23 @@ public class RoomController {
 	@Autowired
 	private RoomService roomService;
 	
-	
+	@GetMapping("/rooms/{roomId}/addInFavourites")
+	public List<RoomListDTO> addRoomInFavourites(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response){
+		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") == null) {
+			response.setStatus(401);
+			return null;
+		}
+		
+		long id = (long) session.getAttribute("userId"); 
+		try {
+			return roomService.addRoomInFavourites(id, roomId);
+		} catch (UserException e) {
+			response.setStatus(400);
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	@GetMapping("/rooms")
 	public List<RoomListDTO> getAllRooms(HttpServletResponse response) throws RoomNotFoundException{
@@ -76,6 +92,7 @@ public class RoomController {
 			e.printStackTrace();
 		}
 	}
+	
 	
 	
 }

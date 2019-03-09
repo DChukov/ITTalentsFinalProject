@@ -67,4 +67,7 @@ public class Room {
 	
 	private Long userId;
 	
+	@ManyToMany(mappedBy = "favourites")
+	private Set<User> inFavourites;
+	
 }
