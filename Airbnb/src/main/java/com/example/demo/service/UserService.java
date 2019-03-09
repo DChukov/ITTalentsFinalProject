@@ -9,11 +9,15 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dao.BookingRepository;
+import com.example.demo.dao.RoomRepository;
 import com.example.demo.dao.UserRepository;
+import com.example.demo.dto.BookingListDTO;
 import com.example.demo.dto.EditProfileDTO;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.RoomListDTO;
+import com.example.demo.dto.UserBookingsDTO;
 import com.example.demo.dto.UserProfileDTO;
 import com.example.demo.exceptions.SignUpException;
 import com.example.demo.exceptions.UserException;
@@ -31,6 +35,11 @@ public class UserService {
 	
 	@Autowired
 	private ReviewService reviewService;
+	
+	@Autowired
+	private BookingRepository bookingRepository;
+	
+	
 	
 	public Set<User> getAllUsers(){
 		return userRepository.findAll().stream().collect(Collectors.toSet());
@@ -105,5 +114,12 @@ public class UserService {
 	    String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}";
 	    return password.matches(pattern);
 	  }
-		
+
+
+	public Set<UserBookingsDTO> showMyBookings(long userId) {
+			return bookingRepository.findAll().stream()
+			.filter(b -> b.getUser().getId().equals(userId))
+			.map(b -> new UserBookingsDTO(b.getRoom().getId(), b.getStartDate(), b.getEndDate()))
+			.collect(Collectors.toSet());
+	}
 }

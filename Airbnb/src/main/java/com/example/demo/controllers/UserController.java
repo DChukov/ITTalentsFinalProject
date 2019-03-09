@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.EditProfileDTO;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.dto.RoomListDTO;
+import com.example.demo.dto.UserBookingsDTO;
 import com.example.demo.dto.UserProfileDTO;
 import com.example.demo.exceptions.BadRequestException;
 import com.example.demo.exceptions.SignUpException;
@@ -110,5 +111,16 @@ public class UserController {
 		
 		long id = (long) session.getAttribute("userId"); 
 		return userService.viewFavouritesRoom(id);
+	}
+	
+	@GetMapping("/myBookings")
+	public Set<UserBookingsDTO> showMyBookings(HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException{
+		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") == null) {
+			throw new UnauthorizedException("You must login first");
+		}
+		
+		long id = (long) session.getAttribute("userId"); 
+		return userService.showMyBookings(id);
 	}
 }

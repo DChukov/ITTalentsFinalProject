@@ -30,7 +30,6 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Room {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -13,6 +13,7 @@ import com.example.demo.dto.RoomAddDTO;
 import com.example.demo.dto.RoomBookingDTO;
 import com.example.demo.dto.RoomInfoDTO;
 import com.example.demo.dto.RoomListDTO;
+import com.example.demo.dto.UserBookingsDTO;
 import com.example.demo.exceptions.BookingIsOverlapingException;
 import com.example.demo.exceptions.RoomNotFoundException;
 import com.example.demo.model.Booking;
@@ -66,7 +67,8 @@ public class RoomService {
 
 	public List<RoomListDTO> getRoomsForHomePage() {
 		return roomRepository.findAll().stream()
-				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), reviewService.getRoomRating(room.getId()), reviewService.getRoomTimesRated(room.getId())))
+				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), 
+						reviewService.getRoomRating(room.getId()), reviewService.getRoomTimesRated(room.getId())))
 				.collect(Collectors.toList());
 
 	}
@@ -196,4 +198,5 @@ public class RoomService {
 		.map(b -> new BookingListDTO(b.getStartDate(), b.getEndDate()))
 		.collect(Collectors.toSet());
 	}
+	
 }
