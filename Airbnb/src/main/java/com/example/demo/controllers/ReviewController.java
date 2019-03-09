@@ -30,7 +30,7 @@ public class ReviewController {
 	private ReviewService reviewService;
 	
 	@GetMapping("/rooms/{roomId}/reviews")
-	public Set<ReviewsForRoomDTO> getAllReviewsByRoomId(@PathVariable int roomId,HttpServletResponse response){
+	public Set<ReviewsForRoomDTO> getAllReviewsByRoomId(@PathVariable long roomId,HttpServletResponse response){
 		try {
 			return reviewService.getAllReviewsByRoomId(roomId);
 		} catch (RoomNotFoundException e) {

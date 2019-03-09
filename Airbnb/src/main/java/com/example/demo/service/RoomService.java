@@ -6,6 +6,7 @@ import com.example.demo.dao.PhotoRepository;
 import com.example.demo.dao.ReviewRepository;
 import com.example.demo.dao.RoomRepository;
 import com.example.demo.dao.UserRepository;
+import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.RoomAddDTO;
 import com.example.demo.dto.RoomInfoDTO;
 import com.example.demo.dto.RoomListDTO;
@@ -95,5 +96,24 @@ public class RoomService {
 			throw new UserException("User is not authorised");
 		}
 		roomRepository.delete(roomRepository.findById(roomId));
+	}
+	public Set<RoomListDTO> getUserRooms(long userId){
+		return roomRepository.findAll().stream().filter(room -> room.getUserId().equals(userId))
+				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), reviewService.getRoomRating(room.getId()), reviewService.getRoomTimesRated(room.getId())))
+				.collect(Collectors.toSet());
+	}
+	
+	public Set<ReviewsForRoomDTO> getUserReviews(long userId){
+		return roomRepository.findAll().stream().filter(room -> room.getUserId().equals(userId))
+				.map(room -> {
+					try {
+						return reviewService.getAllReviewsByRoomId(room.getId());
+					} catch (RoomNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return null;
+				}).flatMap(Set::stream)
+				.collect(Collectors.toSet());
 	}
 }

@@ -34,7 +34,7 @@ public class ReviewService {
 	@Autowired
 	private RoomRepository roomRepository;
 	
-	public Set<ReviewsForRoomDTO> getAllReviewsByRoomId(int roomId) throws RoomNotFoundException {
+	public Set<ReviewsForRoomDTO> getAllReviewsByRoomId(Long roomId) throws RoomNotFoundException {
 		if ( roomRepository.findById(roomId) == null) {
 			throw new RoomNotFoundException("Room not found");
 		}

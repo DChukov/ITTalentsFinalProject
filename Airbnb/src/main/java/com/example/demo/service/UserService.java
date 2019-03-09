@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.UserRepository;
 import com.example.demo.dto.LoginDTO;
+import com.example.demo.dto.ReviewsForRoomDTO;
+import com.example.demo.dto.RoomListDTO;
+import com.example.demo.dto.UserProfileDTO;
 import com.example.demo.exceptions.SignUpException;
 import com.example.demo.exceptions.UserException;
 import com.example.demo.model.Room;
@@ -20,6 +23,12 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private RoomService roomService;
+	
+	@Autowired
+	private ReviewService reviewService;
 	
 	public Set<User> getAllUsers() throws SQLException{
 		return userRepository.findAll().stream().collect(Collectors.toSet());
@@ -44,14 +53,14 @@ public class UserService {
 		return result.getId();
 	}
 	
-	public User getUserById(long userId) throws UserException {
+	public UserProfileDTO getUserById(long userId) throws UserException {
 		User user = userRepository.findById(userId);
 		
 		if ( user == null) {
 			throw new UserException("User not found");
 		}
 		
-		return user;
+		return new UserProfileDTO(user.viewAllNames(),user.getPhone(),roomService.getUserRooms(userId),roomService.getUserReviews(userId));
 	}
 	
 	public User login(LoginDTO loginDTO) throws UserException {
@@ -65,6 +74,7 @@ public class UserService {
 	
 		return user;
 	}
+	
 	
 	public boolean isValidEmailAddress(String email) {
         String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.LoginDTO;
+import com.example.demo.dto.UserProfileDTO;
 import com.example.demo.exceptions.SignUpException;
 import com.example.demo.exceptions.UserException;
 import com.example.demo.model.User;
@@ -57,7 +58,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/users/{userId}")
-	public User getUserDetails(@PathVariable long userId,HttpServletResponse response) {
+	public UserProfileDTO getUserDetails(@PathVariable long userId,HttpServletResponse response) {
 		try {
 			return userService.getUserById(userId);
 		} catch (UserException e) {
@@ -88,7 +89,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/profile")
-	public User getUserProfile(HttpServletRequest request,HttpServletResponse response) {
+	public UserProfileDTO getUserProfile(HttpServletRequest request,HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
 			response.setStatus(401);
