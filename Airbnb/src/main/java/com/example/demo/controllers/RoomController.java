@@ -1,10 +1,13 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dto.RoomAddDTO;
+import com.example.demo.dto.RoomBookingDTO;
 import com.example.demo.dto.RoomInfoDTO;
 import com.example.demo.dao.RoomRepository;
+import com.example.demo.dto.BookingListDTO;
 import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.RoomListDTO;
+import com.example.demo.exceptions.BookingIsOverlapingException;
 import com.example.demo.exceptions.RoomNotFoundException;
 import com.example.demo.exceptions.UnauthorizedException;
 import com.example.demo.exceptions.UserException;
@@ -74,6 +77,7 @@ public class RoomController {
 	public void deleteRoom(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
+			response.setStatus(401);
 			throw new UnauthorizedException("You must login first");
 		}
 		long id = (long) session.getAttribute("userId"); 
@@ -85,5 +89,20 @@ public class RoomController {
 		return roomService.getRoomsByCityName(cityName);
 	}
 	
+	@PostMapping("/rooms/booking")
+	public long makeReservation(@RequestBody RoomBookingDTO reservation,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, BookingIsOverlapingException {
+		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") == null) {
+			throw new UnauthorizedException("You must login first");
+		}
+		
+		long id = (long) session.getAttribute("userId"); 
+		return roomService.makeReservation(reservation, id);
+	}
+	
+	@GetMapping("/rooms/bookings={roomId}")
+	public Set<BookingListDTO> getRoomsByCityName(@PathVariable long roomId , HttpServletResponse response){
+		return roomService.showAllBookingsForRoom(roomId);
+	}
 	
 }

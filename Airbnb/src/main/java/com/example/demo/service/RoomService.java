@@ -1,24 +1,32 @@
 package com.example.demo.service;
 
 import com.example.demo.dao.AmenityRepository;
+import com.example.demo.dao.BookingRepository;
 import com.example.demo.dao.CityRepository;
 import com.example.demo.dao.PhotoRepository;
 import com.example.demo.dao.ReviewRepository;
 import com.example.demo.dao.RoomRepository;
 import com.example.demo.dao.UserRepository;
+import com.example.demo.dto.BookingListDTO;
 import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.RoomAddDTO;
+import com.example.demo.dto.RoomBookingDTO;
 import com.example.demo.dto.RoomInfoDTO;
 import com.example.demo.dto.RoomListDTO;
+import com.example.demo.exceptions.BookingIsOverlapingException;
 import com.example.demo.exceptions.RoomNotFoundException;
+import com.example.demo.model.Booking;
 import com.example.demo.model.City;
 import com.example.demo.exceptions.UserException;
 import com.example.demo.model.Photo;
 import com.example.demo.model.Room;
+import com.example.demo.model.User;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -51,6 +59,9 @@ public class RoomService {
 
 	@Autowired
 	private AmenityRepository amenityRepository;
+	
+	@Autowired
+	private BookingRepository bookingRepository;
 
 	public List<RoomListDTO> getRoomsForHomePage() {
 		return roomRepository.findAll().stream()
@@ -134,5 +145,36 @@ public class RoomService {
 				.filter(room -> room.getCity().getName().equalsIgnoreCase(cityName))
 				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), 0, 0))
 				.collect(Collectors.toSet());
+	}
+
+	public long makeReservation(RoomBookingDTO reservation, Long userId) throws BookingIsOverlapingException {
+		if (reservation.getStartDate().isAfter(reservation.getEndDate())) {
+			LocalDate temp = reservation.getStartDate();
+			reservation.setStartDate(reservation.getEndDate());
+			reservation.setEndDate(temp);
+		}
+		
+		Booking result = new Booking(null, reservation.getStartDate(), reservation.getEndDate(),
+				userRepository.findById(userId), roomRepository.findById(reservation.getRoomId()));
+
+		boolean isOverlapping = bookingRepository.findAll().stream()
+				.filter(booking -> booking.getRoom().getId().equals(reservation.getRoomId()))
+				.anyMatch(booking -> booking.overlap(result));
+		
+		if(isOverlapping) {
+			throw new BookingIsOverlapingException("Overlaping dates");
+		}
+		
+		bookingRepository.saveAndFlush(result);
+		
+		return result.getId();
+		
+	}
+	
+	public Set<BookingListDTO> showAllBookingsForRoom(long roomId){
+		return bookingRepository.findAll().stream()
+		.filter(b -> b.getRoom().getId().equals(roomId))
+		.map(b -> new BookingListDTO(b.getStartDate(), b.getEndDate()))
+		.collect(Collectors.toSet());
 	}
 }

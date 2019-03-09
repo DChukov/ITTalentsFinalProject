@@ -9,14 +9,20 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name="bookings")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Booking {
 	
 	@Id
@@ -34,4 +40,19 @@ public class Booking {
 	@ManyToOne
 	private Room room;
 	
+	
+	public boolean overlap(Booking b) {
+		if (b != null) {
+			return (this.getStartDate().isAfter(b.getStartDate()) && this.getStartDate().isBefore(b.getEndDate()))
+					|| (this.getEndDate().isAfter(b.getStartDate()) && this.getEndDate().isBefore(b.getEndDate()))
+					|| (this.getStartDate().isBefore(b.getStartDate())
+							&& this.getEndDate().isAfter(b.getStartDate()))
+					|| (this.getStartDate().isBefore(b.getEndDate()) && this.getEndDate().isAfter(b.getEndDate()))
+					|| (this.getStartDate().isEqual(b.getStartDate())
+							|| (this.getStartDate().isEqual(b.getEndDate()))
+							|| (this.getEndDate().isEqual(b.getStartDate()))
+							|| (this.getEndDate().isEqual(b.getEndDate())));
+		}
+		return true;
+	}
 }

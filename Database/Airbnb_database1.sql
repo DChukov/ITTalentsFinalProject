@@ -73,9 +73,6 @@ CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`rooms` (
   PRIMARY KEY (`id`),
   INDEX `fk_Rooms_Cities1_idx` (`city_id` ASC) VISIBLE,
   INDEX `fk_Rooms_Users1_idx` (`user_id` ASC) VISIBLE,
-  CONSTRAINT `FKg3b03ni2v2le38dc78o8rcd4`
-    FOREIGN KEY (`city_id`)
-    REFERENCES `airbnbdatabase`.`cities` (`id`),
   CONSTRAINT `fk_Rooms_Cities1`
     FOREIGN KEY (`city_id`)
     REFERENCES `airbnbdatabase`.`cities` (`id`),
@@ -90,7 +87,7 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `airbnbdatabase`.`bookings`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`bookings` (
-  `id` INT(11) NOT NULL,
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
   `end_date` DATE NOT NULL,
   `start_date` DATE NOT NULL,
   `room_id` INT(11) NOT NULL,
@@ -161,7 +158,7 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `airbnbdatabase`.`photos`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`photos` (
-  `id` INT(11) NOT NULL,
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
   `url` VARCHAR(255) NOT NULL,
   `room_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
