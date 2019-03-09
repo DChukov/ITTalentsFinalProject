@@ -12,6 +12,6 @@ import lombok.Setter;
 public class RoomListDTO {
 	private String details;
 	private String city;
-	private OptionalDouble rating;
+	private double rating;
 	private int timesRated;
 }

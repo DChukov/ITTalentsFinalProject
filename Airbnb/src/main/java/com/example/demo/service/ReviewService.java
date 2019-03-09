@@ -68,9 +68,10 @@ public class ReviewService {
 		reviewRepository.saveAndFlush(review);
 	}
 	
-	public OptionalDouble getRoomRating(long roomId) {
+	public double getRoomRating(long roomId) {
 		return reviewRepository.findAll().stream().filter(review -> review.getRoom().equals(roomRepository.findById(roomId)))
-				.mapToInt( review -> review.getStars()).average();
+				.mapToInt( review -> review.getStars()).average().orElse(0);
+
 	}
 	
 	public int getRoomTimesRated(long roomId) {
