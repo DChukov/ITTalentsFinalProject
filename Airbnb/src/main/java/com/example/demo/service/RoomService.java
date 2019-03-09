@@ -11,6 +11,7 @@ import com.example.demo.dto.RoomAddDTO;
 import com.example.demo.dto.RoomInfoDTO;
 import com.example.demo.dto.RoomListDTO;
 import com.example.demo.exceptions.RoomNotFoundException;
+import com.example.demo.exceptions.UnauthorizedException;
 import com.example.demo.model.City;
 import com.example.demo.exceptions.UserException;
 import com.example.demo.model.Photo;
@@ -93,19 +94,31 @@ public class RoomService {
 		return result.getId();
 	}
 
-	public void removeRoom(long roomId, long userId) throws UserException {
+	public void removeRoom(long roomId, long userId) throws UserException, RoomNotFoundException {
+		Room r = roomRepository.findById(roomId);
+
+		if (r == null) {
+			throw new RoomNotFoundException("Room not found");
+		}
 		if ( roomRepository.findById(roomId).getUserId() != userId) {
 			throw new UserException("User is not authorised");
 		}
 		roomRepository.delete(roomRepository.findById(roomId));
 	}
-	public Set<RoomListDTO> getUserRooms(long userId){
+	public Set<RoomListDTO> getUserRooms(long userId) throws UserException{
+
+		if (userRepository.findById(userId) == null) {
+			throw new UserException("User not found");
+		}
 		return roomRepository.findAll().stream().filter(room -> room.getUserId().equals(userId))
 				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), reviewService.getRoomRating(room.getId()), reviewService.getRoomTimesRated(room.getId())))
 				.collect(Collectors.toSet());
 	}
 	
-	public Set<ReviewsForRoomDTO> getUserReviews(long userId){
+	public Set<ReviewsForRoomDTO> getUserReviews(long userId) throws UserException{
+		if (userRepository.findById(userId) == null) {
+			throw new UserException("User not found");
+		}
 		return roomRepository.findAll().stream().filter(room -> room.getUserId().equals(userId))
 				.map(room -> {
 					try {
@@ -118,11 +131,17 @@ public class RoomService {
 				.collect(Collectors.toSet());
 	}
 	
-	public List<RoomListDTO> addRoomInFavourites(long userId, long roomId) throws UserException{
-		if ( roomRepository.findById(roomId).getUserId() == userId) {
-			throw new UserException("User can not put his own room in Favourites!");
+	public List<RoomListDTO> addRoomInFavourites(long userId, long roomId) throws RoomNotFoundException, UnauthorizedException{
+		Room room = roomRepository.findById(roomId);
+		if ( room == null) {
+			throw new RoomNotFoundException("Room not found!");
 		}
-		userRepository.findById(userId).getFavourites().add(roomRepository.findById(roomId));
+		if ( roomRepository.findById(roomId).getUserId() == userId) {
+			throw new UnauthorizedException("User can not put his own room in Favourites!");
+		}
+		
+		
+		userRepository.findById(userId).getFavourites().add(room);
 		userRepository.saveAndFlush(userRepository.findById(userId));
 		return userService.viewFavouritesRoom(userId);
 

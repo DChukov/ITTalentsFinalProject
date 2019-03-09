@@ -34,7 +34,7 @@ public class RoomController {
 	private RoomService roomService;
 	
 	@GetMapping("/rooms/{roomId}/addInFavourites")
-	public List<RoomListDTO> addRoomInFavourites(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException{
+	public List<RoomListDTO> addRoomInFavourites(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, RoomNotFoundException{
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
 			throw new UnauthorizedException("You must login first");
@@ -71,7 +71,7 @@ public class RoomController {
 	}
 	
 	@PostMapping("/rooms/delete/{roomId}")
-	public void deleteRoom(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException {
+	public void deleteRoom(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException, RoomNotFoundException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
 			throw new UnauthorizedException("You must login first");
