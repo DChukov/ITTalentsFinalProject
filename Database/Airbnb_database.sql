@@ -102,15 +102,15 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `airbnbdatabase`.`favourites`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`favourites` (
-  `rooms_id` INT(11) NOT NULL,
-  `users_id` INT(11) NOT NULL,
-  INDEX `fk_table1_rooms1_idx` (`rooms_id` ASC) VISIBLE,
-  INDEX `fk_table1_users1_idx` (`users_id` ASC) VISIBLE,
+  `roomid` INT(11) NOT NULL,
+  `user_id` INT(11) NOT NULL,
+  INDEX `fk_table1_rooms1_idx` (`room_id` ASC) VISIBLE,
+  INDEX `fk_table1_users1_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `fk_table1_rooms1`
-    FOREIGN KEY (`rooms_id`)
+    FOREIGN KEY (`room_id`)
     REFERENCES `airbnbdatabase`.`rooms` (`id`),
   CONSTRAINT `fk_table1_users1`
-    FOREIGN KEY (`users_id`)
+    FOREIGN KEY (`user_id`)
     REFERENCES `airbnbdatabase`.`users` (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
