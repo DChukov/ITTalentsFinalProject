@@ -29,18 +29,6 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `airbnbdatabase`.`bookings`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`bookings` (
-  `id` INT(11) NOT NULL,
-  `end_date` DATE NULL DEFAULT NULL,
-  `start_date` DATE NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = MyISAM
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
 -- Table `airbnbdatabase`.`cities`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`cities` (
@@ -99,10 +87,32 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
+-- Table `airbnbdatabase`.`bookings`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`bookings` (
+  `id` INT(11) NOT NULL,
+  `end_date` DATE NOT NULL,
+  `start_date` DATE NOT NULL,
+  `room_id` INT(11) NOT NULL,
+  `user_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_bookings_rooms1_idx` (`room_id` ASC) VISIBLE,
+  INDEX `fk_bookings_users1_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `fk_bookings_rooms1`
+    FOREIGN KEY (`room_id`)
+    REFERENCES `airbnbdatabase`.`rooms` (`id`),
+  CONSTRAINT `fk_bookings_users1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `airbnbdatabase`.`users` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `airbnbdatabase`.`favourites`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`favourites` (
-  `roomid` INT(11) NOT NULL,
+  `room_id` INT(11) NOT NULL,
   `user_id` INT(11) NOT NULL,
   INDEX `fk_table1_rooms1_idx` (`room_id` ASC) VISIBLE,
   INDEX `fk_table1_users1_idx` (`user_id` ASC) VISIBLE,
@@ -152,9 +162,16 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`photos` (
   `id` INT(11) NOT NULL,
-  `url` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = MyISAM
+  `url` VARCHAR(255) NOT NULL,
+  `room_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_photos_rooms1_idx` (`room_id` ASC) VISIBLE,
+  CONSTRAINT `fk_photos_rooms1`
+    FOREIGN KEY (`room_id`)
+    REFERENCES `airbnbdatabase`.`rooms` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -187,7 +204,7 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `airbnbdatabase`.`rooms_amenities` (
   `amenity_id` INT(11) NOT NULL,
   `room_id` INT(11) NOT NULL,
-  PRIMARY KEY (`amenity_id`,`room_id`),
+  PRIMARY KEY (`amenity_id`, `room_id`),
   INDEX `fk_Rooms_Amenities_Amenities1_idx` (`amenity_id` ASC) VISIBLE,
   INDEX `fk_Rooms_Amenities_Rooms1_idx` (`room_id` ASC) VISIBLE,
   CONSTRAINT `fk_Rooms_Amenities_Amenities1`
