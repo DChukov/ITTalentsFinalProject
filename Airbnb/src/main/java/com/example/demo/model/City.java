@@ -29,4 +29,5 @@ public class City {
 	
 	@OneToMany(mappedBy = "city")
 	private Set<Room> rooms;
+	
 }

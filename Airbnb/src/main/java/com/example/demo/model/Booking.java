@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 @Entity
@@ -25,6 +26,12 @@ public class Booking {
 	private LocalDate startDate;
 	private LocalDate endDate;
 
+	@NonNull
+	@ManyToOne
+	private User user;
+	
+	@NonNull
 	@ManyToOne
 	private Room room;
+	
 }

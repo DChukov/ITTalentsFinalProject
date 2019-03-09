@@ -85,7 +85,7 @@ public class RoomService {
 			cityRepository.save(c);
 		}
 		Room result = new Room(null, room.getAddress(), room.getGuests(), room.getBedrooms(), room.getBeds(),
-				room.getBaths(), room.getPrice(), room.getDetails(), room.getAmenities(), null, null,
+				room.getBaths(), room.getPrice(), room.getDetails(), room.getAmenities(), 
 				cityRepository.findByName(room.getCity().toLowerCase()), userId,null);
 
 		roomRepository.saveAndFlush(result);

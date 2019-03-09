@@ -54,12 +54,13 @@ public class Room {
 	joinColumns = @JoinColumn(name = "room_id"),
 	inverseJoinColumns = @JoinColumn(name = "amenity_id"))
 	private Set<Amenity> amenities;
-	
+/*	
 	@OneToMany(mappedBy = "room")
 	private Set<Booking> bookings;
 	
 	@OneToMany(mappedBy = "room")
 	private Set<Photo> photos;
+*/
 	
 	@NonNull
 	@ManyToOne

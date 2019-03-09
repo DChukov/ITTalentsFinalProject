@@ -8,6 +8,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 @Entity
@@ -22,6 +23,7 @@ public class Photo {
 	
 	private String url;
 	
+	@NonNull
 	@ManyToOne
 	private Room room;
 }
