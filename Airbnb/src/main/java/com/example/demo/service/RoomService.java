@@ -111,7 +111,6 @@ public class RoomService {
 					try {
 						return reviewService.getAllReviewsByRoomId(room.getId());
 					} catch (RoomNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					return null;
@@ -130,5 +129,10 @@ public class RoomService {
 		
 	}
 	
-	
+	public Set<RoomListDTO> getRoomsByCityName(String cityName) {
+		return roomRepository.findAll().stream()
+				.filter(room -> room.getCity().getName().equalsIgnoreCase(cityName))
+				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), 0, 0))
+				.collect(Collectors.toSet());
+	}
 }
