@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import java.util.OptionalDouble;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +12,6 @@ import lombok.Setter;
 public class RoomListDTO {
 	private String details;
 	private String city;
-	private int rating;
+	private OptionalDouble rating;
 	private int timesRated;
 }

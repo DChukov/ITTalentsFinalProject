@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dao.AmenityRepository;
 import com.example.demo.dao.CityRepository;
 import com.example.demo.dao.PhotoRepository;
+import com.example.demo.dao.ReviewRepository;
 import com.example.demo.dao.RoomRepository;
 import com.example.demo.dao.UserRepository;
 import com.example.demo.dto.RoomAddDTO;
@@ -37,6 +38,9 @@ public class RoomService {
 
 	@Autowired
 	private CityRepository cityRepository;
+	
+	@Autowired
+	private ReviewService reviewService;
 
 
 	@Autowired
@@ -47,7 +51,7 @@ public class RoomService {
 
 	public List<RoomListDTO> getRoomsForHomePage() {
 		return roomRepository.findAll().stream()
-				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), 1, 1))
+				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), reviewService.getRoomRating(room.getId()), reviewService.getRoomTimesRated(room.getId())))
 				.collect(Collectors.toList());
 
 	}
@@ -71,7 +75,7 @@ public class RoomService {
 		return result;
 	}
 
-	public long addRoom(RoomAddDTO room) throws UserException, SQLException {
+	public long addRoom(RoomAddDTO room, Long userId) throws UserException, SQLException {
 		if (cityRepository.findByName(room.getCity()) == null) {
 			City c = new City();
 			c.setName(room.getCity());
@@ -79,14 +83,17 @@ public class RoomService {
 		}
 		Room result = new Room(null, room.getAddress(), room.getGuests(), room.getBedrooms(), room.getBeds(),
 				room.getBaths(), room.getPrice(), room.getDetails(), room.getAmenities(), null, null,
-				cityRepository.findByName(room.getCity().toLowerCase()), room.getUserId());
+				cityRepository.findByName(room.getCity().toLowerCase()), userId);
 
 		roomRepository.saveAndFlush(result);
 
 		return result.getId();
 	}
 
-	public void removeRoom(long roomId) {
+	public void removeRoom(long roomId, long userId) throws UserException {
+		if ( roomRepository.findById(roomId).getUserId() != userId) {
+			throw new UserException("User is not authorised");
+		}
 		roomRepository.delete(roomRepository.findById(roomId));
 	}
 }

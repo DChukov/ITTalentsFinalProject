@@ -69,7 +69,7 @@ public class MessageService {
 		
 		for (Entry<Long, TreeSet<Message>> entry: userAllMessages.entrySet()) {
 			Message message = entry.getValue().last();
-			messagesList.add(new ChatListDTO(userRepository.findById(entry.getKey()).getAllNames()
+			messagesList.add(new ChatListDTO(userRepository.findById(entry.getKey()).viewAllNames()
 					,message.getText(),message.getDateTime()));
 		}
 		return messagesList;
@@ -87,7 +87,7 @@ public class MessageService {
 		}
 		
 		for ( Message m : messages) {
-			chat.add(new ChatWithUserDTO(userRepository.findById(m.getSenderId()).getAllNames(),
+			chat.add(new ChatWithUserDTO(userRepository.findById(m.getSenderId()).viewAllNames(),
 					m.getText(), m.getDateTime()));
 		}
 		return chat;

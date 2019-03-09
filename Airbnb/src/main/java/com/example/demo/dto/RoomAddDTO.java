@@ -20,5 +20,4 @@ public class RoomAddDTO {
 	private String details;
 	private Set<Amenity> amenities;
 	private String city;
-	private Long userId;
 }

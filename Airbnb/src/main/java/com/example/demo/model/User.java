@@ -27,7 +27,7 @@ import lombok.ToString;
 public class User {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@NonNull
@@ -59,7 +59,7 @@ public class User {
 		return this.email.hashCode();
 	}
 	
-	public String getAllNames() {
+	public String viewAllNames() {
 		return this.firstName + " " + this.lastName;
 	}
 	

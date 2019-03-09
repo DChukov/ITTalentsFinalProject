@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -46,9 +48,9 @@ public class ReviewService {
 			
 		});
 		
-		allReviewsForRoom.add((ReviewsForRoomDTO) reviewRepository.findAll()
+		allReviewsForRoom = ( reviewRepository.findAll()
 				.stream()
-				.map(review -> new ReviewsForRoomDTO(review.getUser().getAllNames(), review.getDate(), review.getText())));
+				.map(review -> new ReviewsForRoomDTO(review.getUser().viewAllNames(), review.getDate(), review.getText())).collect(Collectors.toSet()));
 		
 		return allReviewsForRoom;
 	}
@@ -64,5 +66,14 @@ public class ReviewService {
 		
 		
 		reviewRepository.saveAndFlush(review);
-		}
+	}
+	
+	public OptionalDouble getRoomRating(long roomId) {
+		return reviewRepository.findAll().stream().filter(review -> review.getRoom().equals(roomRepository.findById(roomId)))
+				.mapToInt( review -> review.getStars()).average();
+	}
+	
+	public int getRoomTimesRated(long roomId) {
+		return (int) reviewRepository.findAll().stream().filter(review -> review.getRoom().equals(roomRepository.findById(roomId))).count();
+	}
 }
