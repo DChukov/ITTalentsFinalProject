@@ -44,7 +44,7 @@ public class RoomController {
 		}
 	}
 	
-	@GetMapping("/rooms/{roomId}")
+	@GetMapping("/rooms/roomId={roomId}")
 	public RoomInfoDTO getRoomById(@PathVariable long roomId) throws RoomNotFoundException {
 			return roomService.getRoomById(roomId);
 	}
@@ -77,5 +77,9 @@ public class RoomController {
 		}
 	}
 	
+	@GetMapping("/rooms/cityName={cityName}")
+	public Set<RoomListDTO> getRoomsByCityName(@PathVariable String cityName , HttpServletResponse response){
+		return roomService.getRoomsByCityName(cityName);
+	}
 	
 }

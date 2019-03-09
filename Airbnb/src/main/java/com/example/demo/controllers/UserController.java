@@ -38,8 +38,8 @@ public class UserController {
 	@PostMapping("/users")
 	public long signUp(@RequestBody User user,HttpServletResponse response,HttpServletRequest request){
 		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			response.setStatus(404);
+		if (session.getAttribute("userId") != null) {
+			response.setStatus(403);
 			return 0;
 		}
 		
@@ -58,7 +58,6 @@ public class UserController {
 		try {
 			return userService.getAllUsers();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -67,7 +66,8 @@ public class UserController {
 	@GetMapping("/users/{userId}")
 	public UserProfileDTO getUserDetails(@PathVariable long userId,HttpServletResponse response) {
 		try {
-			return userService.getUserById(userId);
+			UserProfileDTO result = userService.getUserById(userId);
+			return result; 
 		} catch (UserException e) {
 			response.setStatus(404);
 			e.printStackTrace();
