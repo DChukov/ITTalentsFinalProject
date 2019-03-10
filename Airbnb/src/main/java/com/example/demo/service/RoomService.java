@@ -110,8 +110,10 @@ public class RoomService {
 
 	public void removeRoom(long roomId, long userId) throws UserException, RoomNotFoundException {
 		this.checkRoomOwner(roomId, userId);
+		this.removeAllBookingsFromRoom(roomId);
 		roomRepository.delete(roomRepository.findById(roomId));
 	}
+	
 	public Set<RoomListDTO> getUserRooms(long userId) throws UserException{
 
 		if (userRepository.findById(userId) == null) {
@@ -188,6 +190,19 @@ public class RoomService {
 		
 	}
 	
+	private void removeAllBookingsFromRoom(long roomId) {
+		Set<Booking> roomBookings = bookingRepository.findAll().stream()
+		.filter(b -> b.getRoom().getId().equals(roomId))
+		.collect(Collectors.toSet());
+		
+		bookingRepository.deleteAll(roomBookings);
+	}
+	
+	public void removeBookingById(long bookingId, long userId, long roomId) throws UserException, RoomNotFoundException {
+		this.checkRoomOwner(roomId, userId);
+		bookingRepository.delete(bookingRepository.findById(bookingId));
+	}
+	
 	public Set<BookingListDTO> showAllBookingsForRoom(long roomId){
 		return bookingRepository.findAll().stream()
 		.filter(b -> b.getRoom().getId().equals(roomId))
@@ -210,6 +225,7 @@ public class RoomService {
 		photoRepository.delete(photoRepository.findById(photoId));
 		
 	}
+	
 	private void checkRoomOwner(long roomId, long userId) throws UserException, RoomNotFoundException {
 		Room r = roomRepository.findById(roomId);
 
