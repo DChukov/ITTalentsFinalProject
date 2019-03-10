@@ -40,6 +40,15 @@ public class UserController {
 	@Autowired
 	private RoomService roomService;
 	
+	static long authentication(HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException {
+		HttpSession session = request.getSession();
+		if (session.getAttribute("userId") == null) {
+			throw new UnauthorizedException("You must login first");
+		}
+		
+		long id = (long) session.getAttribute("userId"); 
+		return id;
+	}
 	
 	@PostMapping("/users")
 	public long signUp(@RequestBody User user,HttpServletResponse response,HttpServletRequest request) throws SignUpException, BadRequestException{
@@ -83,44 +92,28 @@ public class UserController {
 	
 	@PutMapping("/changeInformation")
 	public UserProfileDTO changeInformation(@RequestBody EditProfileDTO editProfileDTO,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException {
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
 		
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response);  
 		return userService.changeInformation(id, editProfileDTO);
 	}
 	@GetMapping("/profile")
 	public UserProfileDTO getUserProfile(HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException {
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
 		
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response);  
 		return userService.getUserById(id);
 	}
 	
 	@GetMapping("/viewFavourites")
 	public List<RoomListDTO> viewFavourites(HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException{
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
 		
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response);  
 		return userService.viewFavouritesRoom(id);
 	}
 	
 	@GetMapping("/myBookings")
 	public Set<UserBookingsDTO> showMyBookings(HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException{
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
 		
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response);  
 		return userService.showMyBookings(id);
 	}
 }

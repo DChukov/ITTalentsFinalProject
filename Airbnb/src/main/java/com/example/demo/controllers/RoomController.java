@@ -5,6 +5,7 @@ import com.example.demo.dto.RoomBookingDTO;
 import com.example.demo.dto.RoomInfoDTO;
 import com.example.demo.dao.RoomRepository;
 import com.example.demo.dto.BookingListDTO;
+import com.example.demo.dto.PhotoAddDTO;
 import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.RoomListDTO;
 import com.example.demo.exceptions.BadRequestException;
@@ -39,12 +40,7 @@ public class RoomController {
 	
 	@GetMapping("/rooms/{roomId}/addInFavourites")
 	public List<RoomListDTO> addRoomInFavourites(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, RoomNotFoundException{
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
-		
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response); 
 		return roomService.addRoomInFavourites(id, roomId);
 	}
 	
@@ -65,23 +61,13 @@ public class RoomController {
 	
 	@PostMapping("/rooms/create")
 	public long createRoom(@RequestBody RoomAddDTO newRoom,HttpServletRequest request,HttpServletResponse response) throws UserException, SQLException, UnauthorizedException {
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
-		
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response); 
 		return roomService.addRoom(newRoom,id);
 	}
 	
 	@PostMapping("/rooms/delete/{roomId}")
 	public void deleteRoom(@PathVariable long roomId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException, RoomNotFoundException {
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			response.setStatus(401);
-			throw new UnauthorizedException("You must login first");
-		}
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response); 
 		roomService.removeRoom(roomId,id);
 	}
 	
@@ -92,18 +78,25 @@ public class RoomController {
 	
 	@PostMapping("/rooms/booking")
 	public long makeReservation(@RequestBody RoomBookingDTO reservation,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, BookingIsOverlapingException, RoomNotFoundException, BadRequestException {
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
-		
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response);  
 		return roomService.makeReservation(reservation, id);
 	}
 	
 	@GetMapping("/rooms/bookings={roomId}")
 	public Set<BookingListDTO> getAllBookingsForRoom(@PathVariable long roomId , HttpServletResponse response) throws RoomNotFoundException{
 		return roomService.showAllBookingsForRoom(roomId);
+	}
+	
+	@PostMapping("/rooms/{roomId}/addPhoto")
+	public long addPhoto(@RequestBody PhotoAddDTO photo, @PathVariable long roomId ,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException, RoomNotFoundException {
+		long id = UserController.authentication(request, response); 
+		return roomService.addPhoto(roomId, id, photo);
+	}
+	
+	@PostMapping("/rooms/{roomId}/removePhoto/{photoId}")
+	public void removePhoto(@PathVariable long roomId ,@PathVariable long photoId ,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException, RoomNotFoundException {
+		long id = UserController.authentication(request, response); 
+		roomService.removePhoto(roomId, id, photoId);
 	}
 	
 }

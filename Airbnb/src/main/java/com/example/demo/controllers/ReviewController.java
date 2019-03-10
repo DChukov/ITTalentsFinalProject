@@ -35,7 +35,6 @@ public class ReviewController {
 	private RoomRepository roomRepository;
 	
 	
-	
 	@GetMapping("/rooms/{roomId}/reviews")
 	public Set<ReviewsForRoomDTO> getAllReviewsByRoomId(@PathVariable long roomId,HttpServletResponse response) throws RoomNotFoundException{
 		return reviewService.getAllReviewsByRoomId(roomId);
@@ -43,16 +42,8 @@ public class ReviewController {
 	
 	@PostMapping("/rooms/{roomId}/reviews")
 	public Set<ReviewsForRoomDTO> addReviewForRoom(@PathVariable long roomId, @RequestBody WriteReviewDTO reviewDTO,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, RoomNotFoundException{
+		long id = UserController.authentication(request, response);  
 		
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
-		
-		long id = (long) session.getAttribute("userId"); 
-		if ( roomRepository.findById(roomId).getUserId() == id) {
-			throw new UnauthorizedException("User can not add review for his own room!");		
-		}
 		reviewService.addReviewForRoom(id, roomId, reviewDTO);
 		return this.getAllReviewsByRoomId(roomId, response);
 

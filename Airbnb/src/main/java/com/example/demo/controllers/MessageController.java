@@ -39,24 +39,15 @@ public class MessageController {
 	
 	@GetMapping("/messages")
 	public Set<ChatListDTO> getAllMessages(HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException{
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
-		
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response);  
 		return messageService.getAllMessagesForMessagePage(id);
 		
 	}
 	
 	@GetMapping("/messages/{userId}")
 	public Set<ChatWithUserDTO> getMessagesWithUserById(@PathVariable long userId,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, NoMessagesException{
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
 		
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response);  
 		if ( id == userId) {
 			throw new UnauthorizedException("User can not have messages with himself!");
 		}
@@ -65,12 +56,8 @@ public class MessageController {
 	
 	@PostMapping("/messages/{receiverId}")
 	public Set<ChatWithUserDTO> sendMessage(@PathVariable long receiverId,@RequestBody String text,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, NoMessagesException, UserException {
-		HttpSession session = request.getSession();
-		if (session.getAttribute("userId") == null) {
-			throw new UnauthorizedException("You must login first");
-		}
 		
-		long id = (long) session.getAttribute("userId"); 
+		long id = UserController.authentication(request, response);  
 		if ( id == receiverId) {
 			throw new UnauthorizedException("User can not send message to himself!");
 		}

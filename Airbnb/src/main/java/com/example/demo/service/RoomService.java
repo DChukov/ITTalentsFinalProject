@@ -8,6 +8,7 @@ import com.example.demo.dao.ReviewRepository;
 import com.example.demo.dao.RoomRepository;
 import com.example.demo.dao.UserRepository;
 import com.example.demo.dto.BookingListDTO;
+import com.example.demo.dto.PhotoAddDTO;
 import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.RoomAddDTO;
 import com.example.demo.dto.RoomBookingDTO;
@@ -109,14 +110,8 @@ public class RoomService {
 	}
 
 	public void removeRoom(long roomId, long userId) throws UserException, RoomNotFoundException {
-		Room r = roomRepository.findById(roomId);
-
-		if (r == null) {
-			throw new RoomNotFoundException("Room not found");
-		}
-		if ( roomRepository.findById(roomId).getUserId() != userId) {
-			throw new UserException("User is not authorised");
-		}
+		this.checkRoomOwner(roomId, userId);
+		reviewService.removeAllReviewsForRoom(roomId);
 		roomRepository.delete(roomRepository.findById(roomId));
 	}
 	public Set<RoomListDTO> getUserRooms(long userId) throws UserException{
@@ -125,7 +120,8 @@ public class RoomService {
 			throw new UserException("User not found");
 		}
 		return roomRepository.findAll().stream().filter(room -> room.getUserId().equals(userId))
-				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), reviewService.getRoomRating(room.getId()), reviewService.getRoomTimesRated(room.getId())))
+				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), 
+						reviewService.getRoomRating(room.getId()), reviewService.getRoomTimesRated(room.getId())))
 				.collect(Collectors.toSet());
 	}
 	
@@ -165,7 +161,8 @@ public class RoomService {
 	public Set<RoomListDTO> getRoomsByCityName(String cityName) {
 		return roomRepository.findAll().stream()
 				.filter(room -> room.getCity().getName().equalsIgnoreCase(cityName))
-				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), 0, 0))
+				.map(room -> new RoomListDTO(room.getDetails(), room.getCity().getName(), 
+						reviewService.getRoomRating(room.getId()), reviewService.getRoomTimesRated(room.getId())))
 				.collect(Collectors.toSet());
 	}
 
@@ -208,6 +205,32 @@ public class RoomService {
 		.filter(b -> b.getRoom().getId().equals(roomId))
 		.map(b -> new BookingListDTO(b.getStartDate(), b.getEndDate()))
 		.collect(Collectors.toSet());
+	}
+	
+	public long addPhoto(long roomId, long userId , PhotoAddDTO p) throws UserException, RoomNotFoundException {
+		this.checkRoomOwner(roomId, userId);
+		
+		Photo photo = new Photo(null, p.getUrl(), roomRepository.findById(roomId));
+		
+		photoRepository.saveAndFlush(photo);
+		return photo.getId();
+	}
+	
+	public void removePhoto(long roomId, long userId , long photoId) throws UserException, RoomNotFoundException {
+		this.checkRoomOwner(roomId, userId);
+		
+		photoRepository.delete(photoRepository.findById(photoId));
+		
+	}
+	private void checkRoomOwner(long roomId, long userId) throws UserException, RoomNotFoundException {
+		Room r = roomRepository.findById(roomId);
+
+		if (r == null) {
+			throw new RoomNotFoundException("Room not found");
+		}
+		if ( roomRepository.findById(roomId).getUserId() != userId) {
+			throw new UserException("User is not authorised");
+		}
 	}
 	
 }
