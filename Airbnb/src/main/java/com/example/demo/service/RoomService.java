@@ -111,7 +111,6 @@ public class RoomService {
 
 	public void removeRoom(long roomId, long userId) throws UserException, RoomNotFoundException {
 		this.checkRoomOwner(roomId, userId);
-		reviewService.removeAllReviewsForRoom(roomId);
 		roomRepository.delete(roomRepository.findById(roomId));
 	}
 	public Set<RoomListDTO> getUserRooms(long userId) throws UserException{
