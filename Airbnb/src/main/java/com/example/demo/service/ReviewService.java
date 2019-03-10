@@ -82,4 +82,12 @@ public class ReviewService {
 		return (int) reviewRepository.findAll().stream().filter(review -> review.getRoom().equals(roomRepository.findById(roomId))).count();
 	}
 
+	public void removeAllReviewsForRoom(long roomId) {
+		Set<Review> reviewsForRoom = reviewRepository.findAll().stream()
+		.filter(r -> r.getRoom().getId().equals(roomId))
+		.collect(Collectors.toSet());
+		
+		reviewRepository.deleteAll(reviewsForRoom);
+	}
+
 }

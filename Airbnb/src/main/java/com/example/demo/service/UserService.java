@@ -1,5 +1,9 @@
 package com.example.demo.service;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -39,14 +43,21 @@ public class UserService {
 	@Autowired
 	private BookingRepository bookingRepository;
 	
-	
+	private static String encryptPassword(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+	    MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+	    crypt.reset();
+	    crypt.update(password.getBytes("UTF-8"));
+
+	    return new BigInteger(1, crypt.digest()).toString(16);
+	}
 	
 	public Set<User> getAllUsers(){
 		return userRepository.findAll().stream().collect(Collectors.toSet());
 
 	}
 	
-	public long signup(User user) throws SignUpException {
+	public long signup(User user) throws SignUpException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		
 		if ( !this.isPasswordValid(user.getPassword()) || !this.isValidEmailAddress(user.getEmail())) {
 			throw new SignUpException("Invalid email or password");
@@ -56,7 +67,7 @@ public class UserService {
 			throw new SignUpException("Email is already used");
 		}
 		
-		User result = new User(null, user.getFirstName(), user.getLastName(), user.getPassword(), user.getEmail(),
+		User result = new User(null, user.getFirstName(), user.getLastName(),UserService.encryptPassword(user.getPassword()) , user.getEmail(),
 				user.getBirthDate(), user.getPhone(),null);
 		
 		userRepository.saveAndFlush(result);
@@ -74,10 +85,11 @@ public class UserService {
 		return new UserProfileDTO(user.viewAllNames(),user.getPhone(),roomService.getUserRooms(userId),roomService.getUserReviews(userId));
 	}
 	
-	public User login(LoginDTO loginDTO) throws UserException {
+	public User login(LoginDTO loginDTO) throws UserException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		User user = null;
+		String encryptedPassword = UserService.encryptPassword(loginDTO.getPassword());
 		try{
-			 user = userRepository.findAll().stream().filter(u -> (u.getEmail().equals(loginDTO.getEmail()) && u.getPassword().equals(loginDTO.getPassword()))).findFirst().get();
+			 user = userRepository.findAll().stream().filter(u -> (u.getEmail().equals(loginDTO.getEmail()) && u.getPassword().equals(encryptedPassword))).findFirst().get();
 		}
 		catch(NoSuchElementException e) {
 			throw new UserException("User not found");

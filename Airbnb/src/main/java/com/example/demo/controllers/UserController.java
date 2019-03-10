@@ -1,5 +1,7 @@
 package com.example.demo.controllers;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +53,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/users")
-	public long signUp(@RequestBody User user,HttpServletResponse response,HttpServletRequest request) throws SignUpException, BadRequestException{
+	public long signUp(@RequestBody User user,HttpServletResponse response,HttpServletRequest request) throws SignUpException, BadRequestException, NoSuchAlgorithmException, UnsupportedEncodingException{
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") != null) {
 			throw new BadRequestException("User is already logged in");
@@ -71,7 +73,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
-	public void login(@RequestBody LoginDTO user, HttpServletRequest request,HttpServletResponse response) throws UserException, BadRequestException {
+	public void login(@RequestBody LoginDTO user, HttpServletRequest request,HttpServletResponse response) throws UserException, BadRequestException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") != null) {
 			throw new BadRequestException("User is already logged in!");

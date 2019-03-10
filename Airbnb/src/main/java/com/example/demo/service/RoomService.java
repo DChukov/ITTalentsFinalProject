@@ -54,6 +54,9 @@ public class RoomService {
 	
 	@Autowired
 	private ReviewService reviewService;
+	
+	@Autowired
+	private MessageService messageService;
 
 	@Autowired
 	private UserService userService;
@@ -111,8 +114,11 @@ public class RoomService {
 
 	public void removeRoom(long roomId, long userId) throws UserException, RoomNotFoundException {
 		this.checkRoomOwner(roomId, userId);
+		this.removeAllBookingsFromRoom(roomId,userId);
+		reviewService.removeAllReviewsForRoom(roomId);
 		roomRepository.delete(roomRepository.findById(roomId));
 	}
+	
 	public Set<RoomListDTO> getUserRooms(long userId) throws UserException{
 
 		if (userRepository.findById(userId) == null) {
@@ -196,6 +202,23 @@ public class RoomService {
 		
 	}
 	
+	private void removeAllBookingsFromRoom(long roomId,long userId) throws UserException {
+		Set<Booking> roomBookings = bookingRepository.findAll().stream()
+		.filter(b -> b.getRoom().getId().equals(roomId))
+		.collect(Collectors.toSet());
+		
+		for ( Booking booking : roomBookings) {
+			messageService.sendMessage(userId, booking.getUser().getId(), "Your booking for " + booking.getRoom().getDetails() + " has been canceled. The room has been deleted");
+		}
+		
+		bookingRepository.deleteAll(roomBookings);
+	}
+	
+	public void removeBookingById(long bookingId, long userId, long roomId) throws UserException, RoomNotFoundException {
+		this.checkRoomOwner(roomId, userId);
+		bookingRepository.delete(bookingRepository.findById(bookingId));
+	}
+	
 	public Set<BookingListDTO> showAllBookingsForRoom(long roomId) throws RoomNotFoundException{
 		if ( roomRepository.findById(roomId) == null) {
 			throw new RoomNotFoundException("Room not found!");
@@ -221,6 +244,7 @@ public class RoomService {
 		photoRepository.delete(photoRepository.findById(photoId));
 		
 	}
+	
 	private void checkRoomOwner(long roomId, long userId) throws UserException, RoomNotFoundException {
 		Room r = roomRepository.findById(roomId);
 
@@ -232,4 +256,7 @@ public class RoomService {
 		}
 	}
 	
+	public void informUserForRemovingHisBooking() {
+		
+	}
 }
