@@ -98,8 +98,8 @@ public class UserService {
 		return user;
 	}
 	
-	public UserProfileDTO changeInformation(long userId, EditProfileDTO editProfileDTO) throws UserException {
-		User user = new User(userId, editProfileDTO.getFirstName(),editProfileDTO.getLastName(),editProfileDTO.getPassword(),editProfileDTO.getEmail(),
+	public UserProfileDTO changeInformation(long userId, EditProfileDTO editProfileDTO) throws UserException, NoSuchAlgorithmException, UnsupportedEncodingException {
+		User user = new User(userId, editProfileDTO.getFirstName(),editProfileDTO.getLastName(),UserService.encryptPassword(editProfileDTO.getPassword()),editProfileDTO.getEmail(),
 				editProfileDTO.getBirthDate(),editProfileDTO.getPhone(),null);
 		userRepository.save(user);
 		return this.getUserById(userId);

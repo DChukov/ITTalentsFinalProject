@@ -115,7 +115,13 @@ public class RoomService {
 	public void removeRoom(long roomId, long userId) throws UserException, RoomNotFoundException {
 		this.checkRoomOwner(roomId, userId);
 		this.removeAllBookingsFromRoom(roomId,userId);
+		this.removeAllPhotosForRoom(roomId);
 		reviewService.removeAllReviewsForRoom(roomId);
+		Set<User> inFavourites = roomRepository.findById(roomId).getInFavourites();
+		for ( User u : inFavourites) {
+			u.getFavourites().remove(roomRepository.findById(roomId));
+			userRepository.saveAndFlush(u);
+		}
 		roomRepository.delete(roomRepository.findById(roomId));
 	}
 	
@@ -155,7 +161,8 @@ public class RoomService {
 			throw new UnauthorizedException("User can not put his own room in Favourites!");
 		}
 		
-		
+		roomRepository.findById(roomId).getInFavourites().add(userRepository.findById(userId));
+		roomRepository.saveAndFlush(roomRepository.findById(roomId));
 		userRepository.findById(userId).getFavourites().add(room);
 		userRepository.saveAndFlush(userRepository.findById(userId));
 		return userService.viewFavouritesRoom(userId);
@@ -184,7 +191,9 @@ public class RoomService {
 		if ( reservation.getStartDate().isBefore(LocalDate.now())) {
 			throw new BadRequestException("User can book only for dates after today!");
 		}
-		
+		if ( roomRepository.findById(reservation.getRoomId()).getUserId().equals(userId)) {
+			throw new UnauthorizedException("User can not book hiw own room!");
+		}
 		Booking result = new Booking(null, reservation.getStartDate(), reservation.getEndDate(),
 				userRepository.findById(userId), roomRepository.findById(reservation.getRoomId()));
 
@@ -245,6 +254,14 @@ public class RoomService {
 		
 	}
 	
+	public void removeAllPhotosForRoom(long roomId) {
+		Set<Photo> photos = photoRepository.findAll().stream()
+				.filter(p -> p.getRoom().getId() == roomId)
+				.collect(Collectors.toSet());
+		
+		photoRepository.deleteAll(photos);
+	}
+	
 	private void checkRoomOwner(long roomId, long userId) throws UserException, RoomNotFoundException {
 		Room r = roomRepository.findById(roomId);
 
@@ -254,9 +271,5 @@ public class RoomService {
 		if ( roomRepository.findById(roomId).getUserId() != userId) {
 			throw new UserException("User is not authorised");
 		}
-	}
-	
-	public void informUserForRemovingHisBooking() {
-		
 	}
 }

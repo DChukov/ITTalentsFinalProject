@@ -93,7 +93,7 @@ public class UserController {
 	}
 	
 	@PutMapping("/changeInformation")
-	public UserProfileDTO changeInformation(@RequestBody EditProfileDTO editProfileDTO,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException {
+	public UserProfileDTO changeInformation(@RequestBody EditProfileDTO editProfileDTO,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, UserException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		
 		long id = UserController.authentication(request, response);  
 		return userService.changeInformation(id, editProfileDTO);
