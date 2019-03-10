@@ -18,6 +18,8 @@ import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.RoomListDTO;
 import com.example.demo.dto.WriteReviewDTO;
 import com.example.demo.exceptions.RoomNotFoundException;
+import com.example.demo.exceptions.UnauthorizedException;
+import com.example.demo.exceptions.UserException;
 import com.example.demo.model.Message;
 import com.example.demo.model.Review;
 
@@ -55,13 +57,15 @@ public class ReviewService {
 		return allReviewsForRoom;
 	}
 	
-	public void addReviewForRoom(long userId,long roomId, WriteReviewDTO reviewDTO) throws RoomNotFoundException {
+	public void addReviewForRoom(long userId,long roomId, WriteReviewDTO reviewDTO) throws RoomNotFoundException, UnauthorizedException {
 		LocalDateTime time = LocalDateTime.now();
 		
 		if ( roomRepository.findById(roomId) == null) {
 			throw new RoomNotFoundException("Room not found");
 		}
-		
+		if ( roomRepository.findById(roomId).getUserId() == userId) {
+			throw new UnauthorizedException("User can not add review for his own room!");		
+		}
 		Review review = new Review(null,time,reviewDTO.getText(),userRepository.findById(userId),roomRepository.findById(roomId), reviewDTO.getStars());
 		
 		
@@ -77,4 +81,5 @@ public class ReviewService {
 	public int getRoomTimesRated(long roomId) {
 		return (int) reviewRepository.findAll().stream().filter(review -> review.getRoom().equals(roomRepository.findById(roomId))).count();
 	}
+
 }
