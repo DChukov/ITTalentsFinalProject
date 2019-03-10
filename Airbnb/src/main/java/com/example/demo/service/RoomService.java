@@ -249,6 +249,9 @@ public class RoomService {
 	
 	public void removePhoto(long roomId, long userId , long photoId) throws UserException, RoomNotFoundException {
 		this.checkRoomOwner(roomId, userId);
+		if (photoRepository.findById(photoId) == null ) {
+			throw new RoomNotFoundException("Photo not found!");
+		}
 		
 		photoRepository.delete(photoRepository.findById(photoId));
 		
