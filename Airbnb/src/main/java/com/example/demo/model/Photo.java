@@ -7,7 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
@@ -15,6 +17,8 @@ import lombok.Setter;
 @Table(name="photos")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Photo {
 	
 	@Id
