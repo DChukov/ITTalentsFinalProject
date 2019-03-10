@@ -7,6 +7,7 @@ import com.example.demo.dao.RoomRepository;
 import com.example.demo.dto.BookingListDTO;
 import com.example.demo.dto.ReviewsForRoomDTO;
 import com.example.demo.dto.RoomListDTO;
+import com.example.demo.exceptions.BadRequestException;
 import com.example.demo.exceptions.BookingIsOverlapingException;
 import com.example.demo.exceptions.RoomNotFoundException;
 import com.example.demo.exceptions.UnauthorizedException;
@@ -90,7 +91,7 @@ public class RoomController {
 	}
 	
 	@PostMapping("/rooms/booking")
-	public long makeReservation(@RequestBody RoomBookingDTO reservation,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, BookingIsOverlapingException {
+	public long makeReservation(@RequestBody RoomBookingDTO reservation,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, BookingIsOverlapingException, RoomNotFoundException, BadRequestException {
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {
 			throw new UnauthorizedException("You must login first");
@@ -101,7 +102,7 @@ public class RoomController {
 	}
 	
 	@GetMapping("/rooms/bookings={roomId}")
-	public Set<BookingListDTO> getRoomsByCityName(@PathVariable long roomId , HttpServletResponse response){
+	public Set<BookingListDTO> getAllBookingsForRoom(@PathVariable long roomId , HttpServletResponse response) throws RoomNotFoundException{
 		return roomService.showAllBookingsForRoom(roomId);
 	}
 	

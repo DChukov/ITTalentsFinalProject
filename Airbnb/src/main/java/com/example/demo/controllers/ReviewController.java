@@ -42,7 +42,7 @@ public class ReviewController {
 	}
 	
 	@PostMapping("/rooms/{roomId}/reviews")
-	public Set<ReviewsForRoomDTO> addReviewForRoom(@PathVariable int roomId, @RequestBody WriteReviewDTO reviewDTO,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, RoomNotFoundException{
+	public Set<ReviewsForRoomDTO> addReviewForRoom(@PathVariable long roomId, @RequestBody WriteReviewDTO reviewDTO,HttpServletRequest request,HttpServletResponse response) throws UnauthorizedException, RoomNotFoundException{
 		
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userId") == null) {

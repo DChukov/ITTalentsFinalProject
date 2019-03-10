@@ -14,6 +14,7 @@ import com.example.demo.dto.RoomBookingDTO;
 import com.example.demo.dto.RoomInfoDTO;
 import com.example.demo.dto.RoomListDTO;
 import com.example.demo.dto.UserBookingsDTO;
+import com.example.demo.exceptions.BadRequestException;
 import com.example.demo.exceptions.BookingIsOverlapingException;
 import com.example.demo.exceptions.RoomNotFoundException;
 import com.example.demo.model.Booking;
@@ -168,11 +169,18 @@ public class RoomService {
 				.collect(Collectors.toSet());
 	}
 
-	public long makeReservation(RoomBookingDTO reservation, Long userId) throws BookingIsOverlapingException {
+	public long makeReservation(RoomBookingDTO reservation, Long userId) throws BookingIsOverlapingException, RoomNotFoundException, UnauthorizedException, BadRequestException {
+		if ( roomRepository.findById(reservation.getRoomId()) == null) {
+			throw new RoomNotFoundException("Room not found!");
+		}
+		
 		if (reservation.getStartDate().isAfter(reservation.getEndDate())) {
 			LocalDate temp = reservation.getStartDate();
 			reservation.setStartDate(reservation.getEndDate());
 			reservation.setEndDate(temp);
+		}
+		if ( reservation.getStartDate().isBefore(LocalDate.now())) {
+			throw new BadRequestException("User can book only for dates after today!");
 		}
 		
 		Booking result = new Booking(null, reservation.getStartDate(), reservation.getEndDate(),
@@ -192,7 +200,10 @@ public class RoomService {
 		
 	}
 	
-	public Set<BookingListDTO> showAllBookingsForRoom(long roomId){
+	public Set<BookingListDTO> showAllBookingsForRoom(long roomId) throws RoomNotFoundException{
+		if ( roomRepository.findById(roomId) == null) {
+			throw new RoomNotFoundException("Room not found!");
+		}
 		return bookingRepository.findAll().stream()
 		.filter(b -> b.getRoom().getId().equals(roomId))
 		.map(b -> new BookingListDTO(b.getStartDate(), b.getEndDate()))
