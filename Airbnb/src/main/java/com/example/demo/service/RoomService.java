@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -45,6 +46,9 @@ public class RoomService {
 
 	@Autowired
 	private RoomRepository roomRepository;
+	
+	@Autowired
+	private ReviewRepository reviewRepository;
 
 	@Autowired
 	private PhotoRepository photoRepository;
@@ -140,16 +144,11 @@ public class RoomService {
 		if (userRepository.findById(userId) == null) {
 			throw new UserException("User not found");
 		}
-		return roomRepository.findAll().stream().filter(room -> room.getUserId().equals(userId))
-				.map(room -> {
-					try {
-						return reviewService.getAllReviewsByRoomId(room.getId());
-					} catch (RoomNotFoundException e) {
-						e.printStackTrace();
-					}
-					return null;
-				}).flatMap(Set::stream)
-				.collect(Collectors.toSet());
+		
+		return reviewRepository.findAll().stream().filter(review -> review.getRoom().getUserId() == userId)
+				.map(review -> new ReviewsForRoomDTO(review.getUser().viewAllNames(), review.getDate(),review.getText())).collect(Collectors.toSet());
+		
+				
 	}
 	
 	public List<RoomListDTO> addRoomInFavourites(long userId, long roomId) throws RoomNotFoundException, UnauthorizedException{
@@ -217,7 +216,11 @@ public class RoomService {
 		.collect(Collectors.toSet());
 		
 		for ( Booking booking : roomBookings) {
-			messageService.sendMessage(userId, booking.getUser().getId(), "Your booking for " + booking.getRoom().getDetails() + " has been canceled. The room has been deleted");
+			if ( booking.getStartDate().isAfter(LocalDate.now())) {
+				messageService.sendMessage(userId, booking.getUser().getId(),
+						"Your booking for " + booking.getRoom().getDetails() + " has been canceled. The room has been deleted");
+			}
+			
 		}
 		
 		bookingRepository.deleteAll(roomBookings);
